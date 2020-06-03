@@ -27,7 +27,7 @@ func NewLru(c uint32) (u *Lru) {
 
     u = &Lru{
         head: nil,
-        tail: nil,
+        tail: tail,
         index: make(map[string]*Entry, c),
         n: 0,
         capacity: c,
