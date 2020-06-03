@@ -25,20 +25,19 @@ func NewLru(c uint32) (u *Lru) {
         panic("Lru's capacity must not be zero")
     }
 
-    u = &Lru{}
-    u.capacity = c
-    u.n = 0
-    u.head = nil
-    u.tail = nil
-    u.index = make(map[string]*Entry, c)
+    u = &Lru{
+        head: nil,
+        tail: nil,
+        index: make(map[string]*Entry, c),
+        n: 0,
+        capacity: c,
+    }
     return
 }
 
 func (u *Lru) print() {
-    cur := u.head
-    for cur != nil {
+    for cur:=u.head; cur!=nil; cur=cur.next {
        fmt.Println("key=%+v, value=%+v", cur.key, cur.value)
-       cur = cur.next
     }
 }
 
@@ -65,6 +64,7 @@ func (u *Lru) elect(e *Entry) {
 
 func (u *Lru) add(key string, value interface{}) {
     e := &Entry{nil, nil, key, value}
+    u.index[key] = e
 
     if u.head !=nil {
         u.head.prev = e
@@ -82,7 +82,6 @@ func (u *Lru) add(key string, value interface{}) {
     if u.tail == nil {
         u.tail = e
     }
-    u.index[key] = e
 }
 
 
