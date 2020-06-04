@@ -27,17 +27,9 @@ type Node struct {
     vnodes []*VirtualNode
 }
 
-var max int
-var maxvid int
-
 func (node *Node) KeyNums() (n int) {
     for _, vnode := range(node.vnodes) {
-        d := len(vnode.items)
-        n += d
-        if d > max {
-            max = d
-            maxvid = int(vnode.vid)
-        }
+        n += len(vnode.items)
     }
     return
 }
