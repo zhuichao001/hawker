@@ -9,10 +9,10 @@ import(
 )
 
 const(
-    SCALE_N = 110137 //generate 1:N virtual nodes
+    SCALE_N = 110137 //generate N virtual nodes per real node, the bigger Num get better banlance
 )
 
-func Crc32(str string) uint32 {
+func HashInt(str string) uint32 {
 	return crc32.ChecksumIEEE([]byte(str))
 }
 
@@ -50,11 +50,11 @@ type VirtualNode struct {
 }
 
 func NewNode(nodename string) (node *Node) {
-    nodeid := Crc32(nodename) 
+    nodeid := HashInt(nodename) 
     node = &Node{name:nodename, id:nodeid, vnodes:make([]*VirtualNode, SCALE_N)} 
     for i := 0; i<SCALE_N; i++ {
         vname := fmt.Sprintf("nodeid:%d#idx:%d", nodeid, i)
-        vid := Crc32(vname)
+        vid := HashInt(vname)
         node.vnodes[i] = &VirtualNode{vname, vid, node, make([]*Item, 0)} 
     }
     return
@@ -115,7 +115,7 @@ func (ch *ConsistHash) getVirtualNode(id uint32) *VirtualNode {
 }
 
 func (ch *ConsistHash) AddKey(keyname string) (node *Node) {
-    keyid := Crc32(keyname)
+    keyid := HashInt(keyname)
     vnode := ch.getVirtualNode(keyid) 
     vnode.items = append(vnode.items, &Item{keyid, keyname})
     return vnode.belong
