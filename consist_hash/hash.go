@@ -86,24 +86,18 @@ func (ch *ConsistHash) AddNode(nodename string) error {
 
 func (ch *ConsistHash) getVirtualNode(id uint32) *VirtualNode {
     i, j := 0, len(ch.vnodes)-1
-    mid, found := 0, false
     for i<=j {
-        mid = (i+j)/2
+        mid := (i+j)/2
         if ch.vnodes[mid].vid >= id {
             if mid == 0 || ch.vnodes[mid-1].vid < id {
-                found = true
-                break
+                return ch.vnodes[mid]
             }
             j = mid - 1
         } else {
             i = mid + 1
         }
     }
-    if !found {
-        mid = 0
-    }
-
-    return ch.vnodes[mid]
+    return ch.vnodes[0]
 }
 
 func (ch *ConsistHash) AddKey(keyname string) (node *Node) {
