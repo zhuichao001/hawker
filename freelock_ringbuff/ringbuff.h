@@ -5,10 +5,6 @@
 
 typedef unsigned long long uint64_t;
 
-bool CAS(uint64_t *ptr, uint64_t past, uint64_t now){
-    return __sync_bool_compare_and_swap(ptr, past, now);
-}
-
 const int MSG_LEN=64;
 
 struct Entry {
