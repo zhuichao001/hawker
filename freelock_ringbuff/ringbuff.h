@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <memory.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -8,19 +9,18 @@ bool CAS(uint64_t *ptr, uint64_t past, uint64_t now){
     return __sync_bool_compare_and_swap(ptr, past, now);
 }
 
-const int MSG_LEN=128;
+const int MSG_LEN=64;
 
 struct Entry {
     char msg[MSG_LEN];
-    int size;
 
     Entry * next;
 };
 
-struct EntryList {
+struct RingQueue {
     Entry head;
 
-    EntryList() {
+    RingQueue() {
         head.next = NULL;
     }
 
@@ -32,9 +32,10 @@ struct EntryList {
         while(true){
             Entry *first = head.next;
             if (first==NULL){
+                printf("queue is empty\n");
                 continue;
             }
-            if( CAS((uint64_t*)(&head.next), uint64_t(first), uint64_t(first->next)) ){
+            if( __sync_bool_compare_and_swap((uint64_t*)(&head.next), uint64_t(first), uint64_t(first->next)) ){
                 return first;
             }
         }
@@ -44,40 +45,9 @@ struct EntryList {
         while(true){
             Entry *first = head.next;
             e->next = first;
-            if( CAS((uint64_t*)(&head.next), uint64_t(first), uint64_t(e)) ){
+            if( __sync_bool_compare_and_swap((uint64_t*)(&head.next), uint64_t(first), uint64_t(e)) ){
                 return;
             }
         }
-    }
-};
-
-struct RingQueue {
-    EntryList ready;
-    EntryList raw;
-
-    RingQueue(int n){
-        Entry *all= new Entry[n];
-        for (int i=0; i<n; ++i){
-            raw.push(&all[i]);
-        }
-    }
-
-    void push(char *data, int size){
-        assert(size<=MSG_LEN);
-        Entry *e = raw.pop();
-        memcpy(e->msg, data, size);
-        e->size = size;
-        ready.push(e);
-    }
-
-    void pop(char *data, int &size){
-        Entry *e = ready.pop(); 
-        memcpy(data, e->msg, e->size);
-        size = e->size;
-        raw.push(e);
-    }
-
-    bool empty(){
-        return ready.empty();
     }
 };
