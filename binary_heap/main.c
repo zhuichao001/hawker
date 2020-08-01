@@ -42,6 +42,9 @@ struct heap{
     }
 
     int pop(){
+        if(empty()){
+           return 1<<31;
+        }
         swap(base[0], base[--size]);
         _sift_down(0);
         return base[size];
@@ -121,8 +124,8 @@ int main(){
     h.push(3);
 
     while(!h.empty()){
-       int d = h.pop();
-       cout<<d<<" ===>"<<endl;
+       cout<<h.pop()<<" ===>"<<endl;
     }
+    cout<<h.pop()<<" ===> invalid!"<<endl;
     return 0;
 }
