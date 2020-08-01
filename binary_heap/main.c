@@ -22,15 +22,7 @@ struct heap{
         for(int i=size-1; i>=0; i--){
             base[i]=arr[i];
         }
-
-        for(int i=size-1; i>0; i--){
-            int p = (i-1)>>1;
-            if(base[i] < base[p]){
-                swap(base[p], base[i]);
-                sift_down(i);
-            }
-        }
-        print();
+        _build();
     }
 
     bool empty(){
@@ -41,25 +33,21 @@ struct heap{
         return size==capacity;
     }
 
-    void expand(){
-         capacity <<=1;
-         int * tmp=new int(capacity);
-         for (int i=0; i<size; i++){
-             tmp[i] = base[i];
-         }
-         delete []base;
-         base = tmp;
-    }
-
     void push(int v){
         if(full()){
-            expand();
+            _scale();
         }
         base[size++] = v;
-        sift_up();
+        _sift_up();
     }
 
-    void sift_up(){
+    int pop(){
+        swap(base[0], base[--size]);
+        _sift_down(0);
+        return base[size];
+    }
+
+    void _sift_up(){
         int i=size-1;
         while(i>0){
             int p = (i-1)>>1;
@@ -70,7 +58,7 @@ struct heap{
         }
     }
 
-    void sift_down(int i){
+    void _sift_down(int i){
         while(i<size/2){
             int left = i*2+1, right = i*2+2;
             if(right<=size-1){
@@ -92,11 +80,26 @@ struct heap{
         }
     }
 
-    int pop(){
-        swap(base[0], base[--size]);
-        sift_down(0);
-        return base[size];
+    void _build(){
+        for(int i=size-1; i>0; i--){
+            int p = (i-1)>>1;
+            if(base[i] < base[p]){
+                swap(base[p], base[i]);
+                _sift_down(i);
+            }
+        }
     }
+
+    void _scale(){
+         capacity <<=1;
+         int * tmp=new int(capacity);
+         for (int i=0; i<size; i++){
+             tmp[i] = base[i];
+         }
+         delete []base;
+         base = tmp;
+    }
+
 
     int print(){
         for(int i=0; i<size; i++){
