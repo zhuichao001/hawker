@@ -13,6 +13,7 @@ type Entry struct {
     value interface{}
 }
 
+
 type Lru struct {
     head, tail *Entry
     index map[string]*Entry
@@ -35,11 +36,13 @@ func NewLru(c uint32) (u *Lru) {
     return
 }
 
+
 func (u *Lru) print() {
     for cur:=u.head; cur!=nil; cur=cur.next {
        fmt.Println("key=%+v, value=%+v", cur.key, cur.value)
     }
 }
+
 
 func (u *Lru) elect(e *Entry) {
     if e == u.head {
@@ -104,4 +107,3 @@ func(u *Lru) Get(key string) (value interface{}, err error){
        return nil, errors.New(fmt.Sprintf("Key[%s] Not Exist", key))
    }
 }
-

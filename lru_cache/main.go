@@ -15,6 +15,7 @@ func test() {
    u.print()
 }
 
+
 func main(){
     test()
 }
