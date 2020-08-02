@@ -36,31 +36,31 @@ void* consume(void *arg){
 int main(int argc, char *argv[]) {
     RingQueue *rb = new RingQueue();
 
-    pthread_t cpid[NC];
-    pthread_t ppid[NP];
-    worker cw[NC];
-    worker pw[NP];
+    pthread_t rid[NC];
+    pthread_t wid[NP];
+    worker r[NC];
+    worker w[NP];
 	
 	for (int i = 0; i < NP; ++i) {
-        sprintf(pw[i].name,  "P_%d", i);
-        pw[i].id = i;
-        pw[i].rb = rb;
-		pthread_create(&ppid[i], NULL, produce, &pw[i]);
+        sprintf(w[i].name,  "P_%d", i);
+        w[i].id = i;
+        w[i].rb = rb;
+		pthread_create(&wid[i], NULL, produce, &w[i]);
     }
 
 	for (int i = 0; i < NC; ++i) {
-        sprintf(cw[i].name,  "c_%d", i);
-        cw[i].id = i;
-        cw[i].rb = rb;
-		pthread_create(&cpid[i], NULL, consume, &cw[i]);
+        sprintf(r[i].name,  "c_%d", i);
+        r[i].id = i;
+        r[i].rb = rb;
+		pthread_create(&rid[i], NULL, consume, &r[i]);
 	}
 
 	for (int i = 0; i < NP; ++i) {
-		pthread_join(ppid[i], NULL);
+		pthread_join(wid[i], NULL);
 	}
 
 	for (int i = 0; i < NC; ++i) {
-		pthread_join(cpid[i], NULL);
+		pthread_join(rid[i], NULL);
 	}
 
     return 0;
