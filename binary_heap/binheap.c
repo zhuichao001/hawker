@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 void swap(int &a, int &b){
     int tmp = a;
     a = b;
@@ -51,8 +50,7 @@ struct heap{
     }
 
     void _sift_up(){
-        int i=size-1;
-        while(i>0){
+        for(int i=size-1; i>0; ){
             int p = (i-1)>>1;
             if(base[i]<base[p]){
                 swap(base[i], base[p]);
