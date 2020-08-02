@@ -4,11 +4,11 @@
 
 using namespace std;
 
-int min(int a, int b){
+inline int min(int a, int b){
     return a<b?a:b;
 }
 
-int minDist(string a, string b){
+int minDist(const string &a, const string &b){
     const int M=a.size(), N=b.size();
     int dp[2][N+1];
     memset(dp, 0, sizeof(dp));
