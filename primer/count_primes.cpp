@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int countPrimes(int n) {
-    bool *isPrim = new bool[n+1];
+    bool isPrim[n+1];
     for (int i = 2; i <= n; ++i){
         isPrim[i] = true;
     }
@@ -16,7 +16,6 @@ int countPrimes(int n) {
        }
     }
     
-    delete []isPrim;
     return count;
 }
 
