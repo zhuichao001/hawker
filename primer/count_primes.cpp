@@ -16,6 +16,7 @@ int countPrimes(int n) {
        }
     }
     
+    delete []isPrim;
     return count;
 }
 
