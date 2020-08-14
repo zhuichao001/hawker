@@ -40,6 +40,7 @@ Node *mergeLink(Node *linka, Node *linkb){
             poped = b;
             b = b->next;
         }
+        
         if (head==NULL) {
             head = tail = poped;
         }
