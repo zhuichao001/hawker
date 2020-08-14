@@ -9,7 +9,6 @@ import(
 )
 
 
-//计数限流器
 type CountLimiter struct {
     Limit int32
     Rest  int32
