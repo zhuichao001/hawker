@@ -11,35 +11,29 @@ import(
 
 type CountLimiter struct {
     Limit int32
-    Rest  int32
+    Current int32
     Interval int32
 }
 
 
 func NewCountLimiter(num int32, ms int32) (limiter *CountLimiter) {
-    //Rate: num*1000/ms
     limiter = &CountLimiter{
         Limit: num,
-        Rest: num,
+        Current: 0,
         Interval: ms, //MiliSecond
     }
     return
 }
 
 
-func (c *CountLimiter)Acquire(num int32) bool {
-    for i:=0; i<3; i+=1 {
-        rest := c.Rest
-        if rest < num {
-            return false
-        }
-
-        ok := atomic.CompareAndSwapInt32(&c.Rest, rest, rest-num)
-        if ok {
-            return true
-        }
+func (c *CountLimiter)Acquire() bool {
+    current := c.Current
+    if current > c.Limit {
+        return false
     }
-    return false
+
+    ok := atomic.CompareAndSwapInt32(&c.Current, current, current+1)
+    return ok
 }
 
 
@@ -49,7 +43,7 @@ func (c *CountLimiter)Run() {
     for {
         select {
             case <- ticker.C:
-            c.Rest = c.Limit
+            c.Current = 0
             fmt.Println("@Rest")
         }
     }
@@ -60,7 +54,7 @@ func consume(limiter *CountLimiter) {
     reader := bufio.NewReader(os.Stdin)
     for {
         reader.ReadString('\n')
-        ok := limiter.Acquire(1)
+        ok := limiter.Acquire()
         fmt.Println(ok)
     }
 }
