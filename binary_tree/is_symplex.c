@@ -15,7 +15,6 @@ bool isSubSymplex(Node * one, Node *another){
         return another==NULL?true:false;
     }
 
-    //one is not NULL
     if (another==NULL) {
         return false;
     } else {
@@ -34,12 +33,12 @@ bool isSymplex(Node *root){
 }
 
 int main(){
- /*       a
- *      /   \
- *     b     c
- *      \   /
- *       d e
- */
+    /*       a
+           /   \
+          b     c
+           \   /
+            d e
+    */
     Node a(1), b(2), c(2), d(3), e(3);
     a.left=&b;
     a.right=&c;
