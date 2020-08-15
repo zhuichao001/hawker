@@ -20,7 +20,7 @@ bool isSame(Node * one, Node *another){
         return false;
     }
 
-    if (! one->val==another->val) {
+    if (one->val!=another->val) {
         return false;
     }
 
