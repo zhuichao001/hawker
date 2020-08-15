@@ -3,11 +3,11 @@
 
 //完全二叉树的节点数量
 
-struct Node;
 struct Node{
 	Node *left;
     Node *right;
     int val;
+    Node(int v){val=v; left=right=NULL;}
 };
 
 
@@ -35,22 +35,12 @@ int countNodes(Node *root){
 
 
 int main(){
-    Node a, b, c, d, e, f;
-    a.val=2;
-    b.val=3;
-    c.val=4;
-    d.val=5;
-    e.val=7;
-    f.val=8;
-    a.left=a.right=NULL;
+    Node a(2), b(3), c(4), d(5), e(7), f(8);
     b.left=&a;
     b.right=&c;
-    c.left=c.right=NULL;
     d.left=&b;
     d.right=&f;
-    e.left=e.right=NULL;
     f.left=&e;
-    f.right=NULL;
     printf("count of binary tree:%d\n", countNodes(&d));
     return 0;
 }

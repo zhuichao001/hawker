@@ -10,6 +10,7 @@ struct Node{
     Node(int v){val=v; left=right=NULL;}
 };
 
+
 bool isSubSymplex(Node * one, Node *another){
     if (one==NULL) {
         return another==NULL?true:false;
@@ -31,6 +32,7 @@ bool isSymplex(Node *root){
     }
     return isSubSymplex(root->left, root->right);
 }
+
 
 int main(){
     /*       a
