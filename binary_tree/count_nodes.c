@@ -34,7 +34,7 @@ int countNodes(Node *root){
 }
 
 
-void test(){
+int main(){
     Node a, b, c, d, e, f;
     a.val=2;
     b.val=3;
@@ -52,10 +52,5 @@ void test(){
     f.left=&e;
     f.right=NULL;
     printf("count of binary tree:%d\n", countNodes(&d));
-}
-
-
-int main(){
-    test();
     return 0;
 }
