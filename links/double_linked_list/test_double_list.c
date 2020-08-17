@@ -33,7 +33,6 @@ void printPersonList(Person *person_head) {
         printf("name:%s, age:%d\n", entry->name, entry->age);
     }
     printf("\n");
-
 }
 
 
@@ -45,10 +44,8 @@ int main (int argc, char* argv[]) {
         char bufname[20]={0,};
         sprintf(bufname, "I am no:%d", i+1);
         Person *p = new Person(18+i, bufname);
-
         list_add_tail(&p->list, &person_head.list);
     }
-
     printPersonList(&person_head);
 
     //del Node of age:20
@@ -61,7 +58,18 @@ int main (int argc, char* argv[]) {
             free(entry);
         }
     }
+    printPersonList(&person_head);
 
+    //add Node after 21
+    printf("==== add before node(age:21) ====\n");
+    list_for_each_safe(pos, next, &person_head.list) {
+        Person *entry = list_entry(pos, Person, list);
+        if(entry->age == 21) {
+            char bufname[20]="I am no: 999";
+            Person *p = new Person(999, bufname);
+            list_add(&p->list, &entry->list);
+        }
+    }
     printPersonList(&person_head);
 
     //release all nodes
