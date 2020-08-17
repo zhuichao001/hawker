@@ -5,7 +5,9 @@
 #include <stdio.h>
 
 
-#define max(a,b) ((a)>(b))?(a):(b)
+inline int max(int a, int b) {
+     return a>b ? a:b;
+}
 
 struct Node{
     Node *left;
@@ -16,6 +18,7 @@ struct Node{
     Node(){val=0; left=NULL; right=NULL; height=1;}
 
     Node(int v){val=v; left=NULL; right=NULL; height=1;}
+
     int getBalanced(){
         int lh = (left==NULL)?0:left->height;
         int rh = (right==NULL)?0:right->height;
@@ -45,6 +48,9 @@ struct Node{
     void print() {
         int l = (left==NULL)? -1:left->val;
         int r = (right==NULL)? -1:right->val;
+        if (l+r==-2){ //leaf
+            return;
+        }
 
         printf("%d : <%d, %d>, height:%d\n", val, l, r, height);
 
@@ -61,8 +67,8 @@ struct Node{
 struct Tree{
     Node *root;
     int size;
-    Tree(){root=NULL; size=0;}
 
+    Tree(){root=NULL; size=0;}
     int getHeight(){return root!=NULL?root->height:0;}
     int getSize(){return this->size;}
     int isEmpty(){return root==NULL;}
@@ -107,7 +113,7 @@ struct Tree{
         if(root==NULL){
             root = new Node(val);
         } else {
-            add(root, val);
+            root = add(root, val);
         }
         size += 1;
     }
@@ -128,20 +134,18 @@ struct Tree{
         int leftFactor = getBalancedFactor(node->left); 
         int rightFactor = getBalancedFactor(node->right); 
 
-        if(factor>1 && leftFactor>0){
+        if(factor>1 && leftFactor>0){ //LL
             return rightRotate(node);
         }
-
-        if(factor<-1 && rightFactor<0){
+        if(factor<-1 && rightFactor<0){ //RR
             return leftRotate(node);
         }
 
-        if(factor>1 && leftFactor<0){
+        if(factor>1 && leftFactor<0){ //LR
             node->left = leftRotate(node->left);
             return rightRotate(node);
         }
-
-        if(factor<-1 && rightFactor>0){
+        if(factor<-1 && rightFactor>0){ //RL
             node->right = rightRotate(node->right);
             return leftRotate(node);
         }
