@@ -138,12 +138,12 @@ struct Tree{
 
         if(factor>1 && leftFactor<0){
             node->left = leftRotate(node->left);
-		    return rightRotate(node);
+            return rightRotate(node);
         }
 
         if(factor<-1 && rightFactor>0){
             node->right = rightRotate(node->right);
-		    return leftRotate(node);
+            return leftRotate(node);
         }
         return node;
     }
