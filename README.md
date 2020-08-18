@@ -9,3 +9,8 @@
 - **BINARY HEAP**
 - **FREQUENCE STACK**
 - **SKIP LIST**
+- **AVL TREE**
+- **RATE LIMITER**
+- **COUT PRIMER**
+- **UNION FIND**
+- **GCD LCM**
