@@ -109,6 +109,44 @@ struct Tree{
         return y;
     }
 
+    Node *getNode(int val) {
+        Node *node = root;
+        while (node!= NULL) {
+            if (node->val < val) {
+                node = node->right;
+            } else if (node->val > val) {
+                node = node->left;
+            } else {
+                return node;
+            }
+        }
+        return node;
+    }
+
+    Node *getMinNode(Node *root) {
+        if (root==NULL) {
+            return NULL;
+        }
+
+        Node *node = root;
+        while (node->left != NULL) {
+            node = node->left;
+        }
+        return node;
+    }
+
+    Node *getMaxNode(Node *root) {
+        if (root==NULL) {
+            return NULL;
+        }
+
+        Node *node = root;
+        while (node->right != NULL) {
+            node = node->right;
+        }
+        return node;
+    }
+
     Node *addNode(int val) {
         if(root==NULL){
             root = new Node(val);
@@ -130,6 +168,63 @@ struct Tree{
         }
         node->updateHeight();
 
+        return rebalance(node);
+    }
+
+    Node *delNode(int val) {
+        Node *node = this->getNode(val);
+        if (node==NULL) {
+            return NULL;
+        }
+        root = del(root, node);
+        delete node;
+    }
+
+    Node *del(Node *node, Node *target) {
+        if(node==NULL || target==NULL){
+            return NULL;
+        }
+
+        if(node->val < target->val) {
+            node->right = del(node->right, target);
+        } else if (node->val > target->val) {
+            node->left = del(node->left, target);
+        } else {
+            size -= 1;
+            Node *suc = NULL; 
+            if (node->left==NULL) {
+                suc = node->right;
+                node->right = NULL;
+            } else if (node->right==NULL) {
+                suc = node->left;
+                node->left = NULL;
+            } else {
+                int factor = getBalancedFactor(node);
+                if (factor>0) {
+                    suc = getMaxNode(node->left);
+                    if (suc!=NULL) {
+                        suc->left = del(node->left, suc);
+                        suc->right = node->right;
+                    }
+                } else {
+                    suc = getMinNode(node->right);
+                    if (suc!=NULL) {
+                        suc->right = del(node->right, suc);
+                        suc->left = node->left;
+                    }
+                }
+            }
+            node = suc;
+        }
+        if (node != NULL) {
+            node->updateHeight();
+            return rebalance(node);
+        } else {
+            return node;
+        }
+    }
+
+    Node *rebalance(Node *node){
         int factor = getBalancedFactor(node);
         int leftFactor = getBalancedFactor(node->left); 
         int rightFactor = getBalancedFactor(node->right); 

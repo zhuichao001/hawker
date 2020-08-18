@@ -14,6 +14,12 @@ void test(){
     //t.addNode(5);
     //t.addNode(8);
     //t.addNode(6);
+    t.delNode(28);
+    t.delNode(99);
+    t.delNode(21);
+    t.delNode(27);
+    t.delNode(15);
+    t.delNode(24);
     t.print();
 }
 
