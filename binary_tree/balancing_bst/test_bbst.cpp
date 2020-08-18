@@ -10,10 +10,8 @@ void test(){
     t.addNode(99);
     t.addNode(24);
     t.addNode(28);
+    t.print();
 
-    //t.addNode(5);
-    //t.addNode(8);
-    //t.addNode(6);
     t.delNode(28);
     t.delNode(99);
     t.delNode(21);
