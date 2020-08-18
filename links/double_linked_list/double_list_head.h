@@ -9,7 +9,6 @@ typedef struct ListNode {
 
 typedef ListNode ListHead;
 
-
 //add node between prev and next
 inline void __list_add(ListNode *node, ListNode *prev, ListNode *next) {
     next->prev = node;
@@ -18,28 +17,23 @@ inline void __list_add(ListNode *node, ListNode *prev, ListNode *next) {
     prev->next = node;
 }
 
-
 inline void __list_del(ListNode * prev, ListNode * next) {
     next->prev = prev;
     prev->next = next;
 }
-
 
 inline void init_list_head(ListNode *head) {
     head->next = head;
     head->prev = head;
 }
 
-
 inline void list_add(ListNode *node, ListNode *head) {
     __list_add(node, head, head->next);
 }
 
-
 inline void list_add_tail(ListNode *node, ListNode *head) {
     __list_add(node, head->prev, head);
 }
-
 
 inline void list_del(ListNode *entry) {
     __list_del(entry->prev, entry->next);
@@ -47,19 +41,16 @@ inline void list_del(ListNode *entry) {
     entry->next = 0;
 }
 
-
-inline void list_replace(ListNode *old, ListNode *young) {
-    young->next = old->next;
-    young->next->prev = young;
-    young->prev = old->prev;
-    young->prev->next = young;
+inline void list_replace(ListNode *old, ListNode *newly) {
+    newly->next = old->next;
+    newly->next->prev = newly;
+    newly->prev = old->prev;
+    newly->prev->next = newly;
 }
-
 
 inline int list_empty(const ListNode *head) {
     return head->next == head;
 }
-
 
 //offset of TYPE.MEMBER
 #define offset_of(type, member) ((size_t) &((type *)0)->member)
