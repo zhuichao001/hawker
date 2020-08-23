@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//反转链表
 
 struct Node{
     Node *next;
@@ -10,22 +9,21 @@ struct Node{
 };
 
 
+//k个一组反转链表
 Node *reverseKgroup(Node *head, int k){
     Node *newhead = NULL;
     Node *newtail = NULL;
 
     Node *innerhead = NULL;
-    Node *innertail = NULL;
+    Node *innertail = head;
 
     int n = 1 ;
     for(Node *current = head; current!=NULL; n++){
-        if(innertail==NULL){
-            innertail = current;
-        }
         Node *forward = current->next;
         current->next = innerhead;
         innerhead = current;
         current = forward;
+
         if(n%k==0){
             if(newhead==NULL){
                  newhead = innerhead;
@@ -43,20 +41,25 @@ Node *reverseKgroup(Node *head, int k){
 }
 
 
-int main(){
+Node *prepareLink(){
     const int N = 11;
-    Node nodes[N];
+    Node *nodes = new Node[N];
     for(int i=0;i<N-1;++i){
         nodes[i].next=&nodes[i+1];
         nodes[i].val=i+1;
     }
     nodes[N-1].val=N;
     nodes[N-1].next=NULL;
+    return &nodes[0];
+}
 
-    Node *head = reverseKgroup(&nodes[0], 3);
+int main(){
+    Node *head = prepareLink();
+    head = reverseKgroup(head, 3);
     while(head!=NULL){
         printf("%d ->", head->val);
         head = head->next;
     }
     printf("NULL\n");
+    delete []head;
 }
