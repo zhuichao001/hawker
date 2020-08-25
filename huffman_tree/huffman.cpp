@@ -1,9 +1,12 @@
 #include<iostream>
 #include<string.h>
+#include<cctype>
 #include<queue>
 #include<vector>
 
+
 using namespace std;
+
 
 struct node{
     char cha;
@@ -20,27 +23,17 @@ struct node{
 };
 
 
-inline char lower(char c){
-    if(c>='A'&&c<='Z'){
-        return c-'A'+'a';
-    }
-    if(c<'a'||c>'z'){
-        return '.';
-    }
-    return c;
-}
-
-
 struct compare_node_ptr{
     bool operator()(node *a, node *b)const{return a->weight>b->weight;}
 };
+
 
 node *build(const char *src, int n){
     priority_queue<node*, vector<node*>, compare_node_ptr> pq;
     int hash[26]={0,};
     for(int i=0; i<n; ++i){
-        char c = lower(src[i]);
-        if(c!='.'){
+        char c = tolower(src[i]);
+        if(c>='a'&&c<='z'){
             hash[c-'a'] += 1;
         }
     }
@@ -65,6 +58,7 @@ node *build(const char *src, int n){
     return pq.top();
 }
 
+
 void display(node *root, char *prefix, int len){
     if(root->cha!=' '){
         cout<<root->cha <<":"<<prefix<<endl;
@@ -80,6 +74,7 @@ void display(node *root, char *prefix, int len){
         display(root->right, prefix, len+1);
     }
 }
+
 
 void release(node *root){
     if(root==NULL){
@@ -101,11 +96,17 @@ void release(node *root){
     delete root;
 }
 
-int main(){
+
+void test(){
     const char *src = "abaaassdsadssssaaassss";
     node *root = build(src, strlen(src));
     char prefix[20]={0,};
     display(root, prefix, 0);
     release(root);
+}
+
+
+int main(){
+    test();
     return 0;
 }
