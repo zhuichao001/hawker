@@ -14,3 +14,5 @@
 - **COUT PRIMER**
 - **UNION FIND**
 - **GCD LCM**
+- **HUFF MAN**
+- **SEGMENT TREE**
