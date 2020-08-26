@@ -1,7 +1,6 @@
 #include<string.h>
 #include<stdlib.h>
 #include<iostream>
-#include<cctype>
 #include<queue>
 #include<vector>
 #include<cmath>
