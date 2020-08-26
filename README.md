@@ -1,5 +1,6 @@
 # senior project algrithm adventure
 
+- **A STAR(A*)**
 - **LRU CACHE**
 - **QUIC SORT**
 - **CONSISTENT HASH**
