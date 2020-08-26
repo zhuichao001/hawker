@@ -1,4 +1,6 @@
 #include <iostream>
+#include<limits.h>
+
 using namespace std;
 
 inline int max(int a, int b){
@@ -14,9 +16,10 @@ typedef int (*ReduceFunc)(int, int);
 struct SegmentTree{
     int *data, n;
     int *tree;
+    int initval;
     ReduceFunc func;
 
-    SegmentTree(int *_data, int _n, ReduceFunc f):data(_data), n(_n), func(f){
+    SegmentTree(int *_data, int _n, ReduceFunc f, int _ival):data(_data), n(_n), func(f), initval(_ival){
         build();
     }
 
@@ -44,7 +47,7 @@ struct SegmentTree{
 
     int query_range(int i, int j){
         int l=i+n, r=j+n;
-        int val = 0; //TODO init val
+        int val = initval; //TODO init val
         while(l<=r){
             if(l%2==1){
                 val = func(tree[l], val);
@@ -64,11 +67,11 @@ struct SegmentTree{
 
 int main(){
     int a[6]={6,4,5,9,7,3};
-    SegmentTree st(a, 6, max);
+    SegmentTree st(a, 6, max, INT_MIN);
     int s = st.query_range(0,5);
     cout<<"max result:"<<s<<endl;
 
-    SegmentTree st2(a, 6, sum);
+    SegmentTree st2(a, 6, sum, 0);
     int t = st2.query_range(0,5);
     cout<<"sum result:"<<t<<endl;
 }
