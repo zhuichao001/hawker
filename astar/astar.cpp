@@ -117,7 +117,7 @@ struct area{
     }
 };
 
-node* shortest_path(area *map){
+bool shortest_path(area *map){
     int direc[8][2] = {{0,1},{1,0},{0,-1},{-1,0},{1,1},{1,-1},{-1,1},{-1,-1}};
     priority_queue<node*, vector<node*>, compare_node_ptr> pq;
 
@@ -134,7 +134,12 @@ node* shortest_path(area *map){
         map->mark(&nearest->p);
 
         if(map->reachgoal(&nearest->p)){
-            return nearest; //FINISHED
+            do{ //clear queue
+                delete nearest;
+                nearest = pq.top();
+                pq.pop();
+            }while(!pq.empty());
+            return true; //FINISHED
         }
 
         pos foot;
@@ -166,15 +171,10 @@ node* shortest_path(area *map){
         }
         delete nearest;
     }
-    return NULL;
+    return false;
 }
 
-void display_path(area *map, const pos *goal, const pos *from) {
-    if(goal==NULL){
-        cout<<"warning, goal is null"<<endl;
-        return;
-    }
-
+void display_path(area *map) {
     for(int i=0; i<map->R; ++i){
         for(int j=0; j<map->C; ++j){
             cout<< map->Prev[i][j].x<<","<<map->Prev[i][j].y<< " ";
@@ -182,8 +182,8 @@ void display_path(area *map, const pos *goal, const pos *from) {
         cout<<endl;
     }
 
-    int x=goal->x, y=goal->y;
-    while(x!=from->x || y!=from->y){
+    int x=map->dst.x, y=map->dst.y;
+    while(x!=map->src.x || y!=map->src.y){
         cout<<x<<","<<y<<" -> ";
         int i=x, j=y;
         x = map->Prev[i][j].x;
@@ -210,8 +210,13 @@ void test(){
     pos dst(4, 7);
 
     area map((char**)dots, C, R, o, w, src, dst);
-    node *goal = shortest_path(&map);
-    display_path(&map, &dst, &src);
+    bool ok = shortest_path(&map);
+    if(!ok){
+        cout<<"warning, path not found"<<endl;
+        return;
+    }
+
+    display_path(&map);
 }
 
 int main(){
