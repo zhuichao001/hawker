@@ -34,26 +34,20 @@ struct compare_node_ptr{
 };
 
 struct area{
+    const int  R, C;
+    const char Empty, Wall;
     char **Map;
     bool **Visited;
     int  **Cost;
     pos  **Prev;
-    int  R, C;
-    const char Empty, Wall;
     pos src, dst;
 
-    area(char **_map, int _r, int _c, char _e, char _w, pos _src, pos _dst) : R(_r), C(_c), Empty(_e), Wall(_w){
-        src = _src;
-        dst = _dst;
-
+    area(char **_map, int _r, int _c, char _e, char _w, pos _src, pos _dst) : R(_r), C(_c), Empty(_e), Wall(_w), src(_src), dst(_dst){
         Map = new char*[R*sizeof(char*)];
-
         Visited = new bool*[R*sizeof(bool*)];
         Visited[0] = new bool[R*C*sizeof(bool)];
-
         Cost = new int*[R*sizeof(int*)];
         Cost[0] = new int[R*C*sizeof(int)];
-
         Prev = new pos*[R*sizeof(pos*)];
         Prev[0] = new pos[R*C*sizeof(pos)];
 
@@ -62,7 +56,6 @@ struct area{
             Visited[i] = Visited[0] + i*C*sizeof(bool); 
             Cost[i] = Cost[0] + i*C*sizeof(int); 
             Prev[i] = Prev[0] + i*C*sizeof(pos); 
-
             for(int j=0; j<C; ++j){
                 Visited[i][j] = false;
                 Cost[i][j] = 0;
@@ -74,10 +67,8 @@ struct area{
 
     ~area(){
         delete []Map;
-
         delete []Visited[0];
         delete []Visited;
-
         delete []Cost[0];
         delete []Cost;
     }
@@ -115,7 +106,7 @@ struct area{
             return true;
         }
         
-        if(last->x!=x && last->y!=y){
+        if(last->x!=x && last->y!=y){ //check slant up or slant down
             return Map[last->x][y]==Wall || Map[x][last->y]==Wall;
         }
         return false;
@@ -157,7 +148,7 @@ node* shortest_path(area *map){
                 continue;
             } 
 
-            int mvcost = direc[i][0]*direc[i][1]==0? 100:100;
+            int mvcost = direc[i][0]*direc[i][1]==0? 100:141;
             node *cur = new node(foot);
             cur->G = nearest->G + mvcost;
             cur->H = map->estimate(&foot);
