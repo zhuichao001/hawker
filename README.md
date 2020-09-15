@@ -17,3 +17,4 @@
 - **GCD LCM**
 - **HUFF MAN**
 - **SEGMENT TREE**
+- **HASH CODE**
