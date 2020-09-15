@@ -5,7 +5,7 @@ class HashFunc{
   int seed;
   int roll;
   public:
-    HashFunc(int _seed=131313, int _roll=63689):seed(_seed),roll(_roll){} 
+    HashFunc(int _roll=63689, int _seed=131313):roll(_roll),seed(_seed){} 
     int operator()(const char*src, const int len)const{
         int _seed(seed), _roll(roll);
         int code = 2166136261;

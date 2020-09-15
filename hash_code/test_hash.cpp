@@ -49,7 +49,7 @@ void test_obj(){
 
 void test_func(){
     HashFunc hash_str;
-    HashFunc hash_str2(131313, 63679);
+    HashFunc hash_str2(63679);
     int code=0;
 
     code = hash_str("a", 1);
