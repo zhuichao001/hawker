@@ -17,4 +17,6 @@
 - **GCD LCM**
 - **HUFF MAN**
 - **SEGMENT TREE**
-- **HASH CODE**
+- **HASH CODE / HASH FUNCTOR**
+- **BIG PRIMES**
+- **BLOOM FILTER**
