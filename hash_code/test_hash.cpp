@@ -50,13 +50,13 @@ void test_obj(){
 void test_func(){
     HashFunc hash_str;
     HashFunc hash_str2(63679);
-    int code=0;
+    uint64_t code=0;
 
     code = hash_str("a", 1);
-    printf("hash a:%d\n", code);
+    printf("hash a:%ld\n", code);
 
     code = hash_str2("a", 1);
-    printf("hash2 a:%d\n", code);
+    printf("hash2 a:%ld\n", code);
 }
 
 int main(){
