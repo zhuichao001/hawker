@@ -1,12 +1,12 @@
-#include<bits/stdc++.h>
-#include<stdio.h>
+#ifndef _H_MILLER_ROBIN_H_
+#define _H_MILLER_ROBIN_H_
 
-using namespace std;
+#include <stdint.h>
 
-int64_t littlePrimes[10] = {2,3,5,7,11,13,17,19,23,29};
+uint64_t littlePrimes[10] = {2,3,5,7,11,13,17,19,23,29};
 
-int64_t quickMultiply(int64_t a, int64_t b, int64_t c){
-    int64_t ans = 0, res = a;
+uint64_t quickMultiply(uint64_t a, uint64_t b, uint64_t c){
+    uint64_t ans = 0, res = a;
     while(b){
         if(b & 1){
             ans = (ans + res) % c;
@@ -19,8 +19,8 @@ int64_t quickMultiply(int64_t a, int64_t b, int64_t c){
 
 
 //(a^b)%m
-int64_t quickPower(int64_t a, int64_t b, int64_t m){
-    int64_t ans = 1;
+uint64_t quickPower(uint64_t a, uint64_t b, uint64_t m){
+    uint64_t ans = 1;
     while(b){
         if(b & 1){
             ans = ans * a % m;
@@ -33,9 +33,9 @@ int64_t quickPower(int64_t a, int64_t b, int64_t m){
 
 
 //Miller Rabin
-bool isPrime(int64_t x){ 
-    int64_t i, j, k;
-    int64_t s = 0, t = x-1;
+bool isPrime(uint64_t x){ 
+    uint64_t i, j, k;
+    uint64_t s = 0, t = x-1;
     if(x == 2) return true;
     if(x < 2 || !(x & 1)) return false;
     while(!(t & 1)){ //x-1 = (2^s)*t
@@ -44,8 +44,8 @@ bool isPrime(int64_t x){
     }
 
     for(i = 0; i < 10 && littlePrimes[i] < x; i++){
-        int64_t a = littlePrimes[i];
-        int64_t b = quickPower(a, t, x); //a^t
+        uint64_t a = littlePrimes[i];
+        uint64_t b = quickPower(a, t, x); //a^t
         for(j = 1; j <= s; j++){
             k = quickMultiply(b,b,x); //b^2
             if(k == 1 && b != 1 && b != x-1){
@@ -59,3 +59,5 @@ bool isPrime(int64_t x){
     }
     return true; //maybe primer
 }
+
+#endif

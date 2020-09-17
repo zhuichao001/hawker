@@ -1,6 +1,7 @@
 #include "count_primes.h"
 #include "miller_rabin_primes.h"
 #include <stdio.h>
+#include <stdint.h>
 
 
 void test_count_primes(){
