@@ -13,8 +13,8 @@ class HashFunc{
     HashFunc(uint64_t _roll=63689, uint64_t _seed=131313):roll(_roll),seed(_seed){} 
 
     void setKey(uint64_t _roll=63689, uint64_t _seed=131313){
-        _roll = roll;
-        _seed = seed;
+        roll = _roll;
+        seed = _seed;
     }
 
     uint64_t operator()(const char*src, const int len)const{
