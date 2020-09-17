@@ -18,10 +18,3 @@ int countPrimes(int n) {
     
     return count;
 }
-
-int main(){
-    int c = countPrimes(9);
-    printf("count:%d\n", c);
-    return 0;
-}
-
