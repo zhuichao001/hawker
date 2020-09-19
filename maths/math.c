@@ -12,6 +12,10 @@ inline int average(int x, int y){
     return (x&y) + ((x^y)>>1);
 }
 
+inline int roudup(int v, int align){
+    return (v + align-1) & ~(align- 1);
+}
+
 //x * y % p
 long long multiply(long long x, long long y, long long p){
     long long ret = 0;
@@ -21,3 +25,5 @@ long long multiply(long long x, long long y, long long p){
     }
     return ret;
 }
+
+
