@@ -12,9 +12,7 @@ void case_auto(){
 
 void case_tuple(){
     auto t = make_tuple(1, 2.0, 'w', "C++11");
-     cout << "The value of t is "  << "("
-          << get<0>(t) << ", " << get<1>(t) << ", "
-          << get<2>(t) << ", " << get<3>(t) << ")\n";
+    printf("Value of t is (%d,%.2f,%c,%s)\n", get<0>(t), get<1>(t), get<2>(t), get<3>(t));
 }
 
 void case_init(){
