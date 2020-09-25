@@ -49,12 +49,29 @@ void case_lambda(){
 }
 
 void case_nullptr(){
-    struct A{
+    struct M{
         void Do(int i){cout<<"Do(int):"<<i<<endl;} 
         void Do(int *i){cout<<"Do(intptr):"<<i<<endl;} 
     };
-    struct A a; 
-    a.Do(nullptr);
+    struct M m; 
+    m.Do(nullptr);
+}
+
+void case_default_delete(){
+    struct M{
+        M() = default; 
+        ~M() = default; 
+        M(const M&) = delete;
+        M& operator=(const M&) = delete;
+        void *operator new(size_t) = delete;
+        void *operator new[](size_t) = delete;
+    };
+    M m;
+    // below will be report error by compiler
+    // M n(m);
+    // M x = m;
+    // M y = new M;
+    // M z = new M[3]
 }
 
 int main(){
@@ -64,4 +81,5 @@ int main(){
     case_tuple();
     case_lambda();
     case_nullptr();
+    case_default_delete();
 }
