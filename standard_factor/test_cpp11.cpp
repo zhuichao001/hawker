@@ -1,0 +1,67 @@
+#include <iostream>
+#include <map>
+#include <vector>
+#include <tuple>
+
+using namespace std;
+
+void case_auto(){
+    auto x = 3;  
+    decltype(x) y = x; 
+}
+
+void case_tuple(){
+    auto t = make_tuple(1, 2.0, 'w', "C++11");
+     cout << "The value of t is "  << "("
+          << get<0>(t) << ", " << get<1>(t) << ", "
+          << get<2>(t) << ", " << get<3>(t) << ")\n";
+}
+
+void case_init(){
+    int arr[3]{1, 2, 3};
+    vector<int> vec{1, 2, 3};
+    map<int, string> dict{{1, "a"}, {2, "b"}};
+    string str{"handsome case."};
+}
+
+void case_for_arr(){
+    int a[5] = { 1, 2, 2, 5, 1 };
+    for( int i:a ) {
+        printf( "%d : %d\n", i, a[i] );
+    }
+}
+
+void case_for_map(){
+    map<string, int> m{{"a", 1}, {"b", 2}, {"c", 3}};  
+    for (auto p : m){  
+        cout<<p.first<<" : "<<p.second<<endl;  
+    } 
+}
+
+void case_for_each(){
+    case_for_map();
+    case_for_arr();
+}
+
+void case_lambda(){
+    auto lambda = [](int x, int y) {return x + y;};
+    cout<<"sum:"<<lambda(2,3)<<endl;
+}
+
+void case_nullptr(){
+    struct A{
+        void Do(int i){cout<<"Do(int):"<<i<<endl;} 
+        void Do(int *i){cout<<"Do(intptr):"<<i<<endl;} 
+    };
+    struct A a; 
+    a.Do(nullptr);
+}
+
+int main(){
+    case_auto();
+    case_for_each();
+    case_init();
+    case_tuple();
+    case_lambda();
+    case_nullptr();
+}
