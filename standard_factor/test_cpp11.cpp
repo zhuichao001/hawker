@@ -26,14 +26,14 @@ void case_init(){
 
 void case_for_arr(){
     int a[5] = { 1, 2, 2, 5, 1 };
-    for( int i:a ) {
+    for( int i : a ) {
         printf( "%d : %d\n", i, a[i] );
     }
 }
 
 void case_for_map(){
     map<string, int> m{{"a", 1}, {"b", 2}, {"c", 3}};  
-    for (auto p : m){  
+    for( auto p : m ) {  
         cout<<p.first<<" : "<<p.second<<endl;  
     } 
 }
@@ -68,7 +68,6 @@ void case_default_delete(){
     };
 
     M m;
-
     // error usage
     // M n(m);
     // M x = m;
