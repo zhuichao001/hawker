@@ -68,7 +68,7 @@ void case_default_delete(){
     };
 
     M m;
-    // error usage
+    // wrong usage
     // M n(m);
     // M x = m;
     // M y = new M;
