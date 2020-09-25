@@ -66,8 +66,10 @@ void case_default_delete(){
         void *operator new(size_t) = delete;
         void *operator new[](size_t) = delete;
     };
+
     M m;
-    // below will be report error by compiler
+
+    // error usage
     // M n(m);
     // M x = m;
     // M y = new M;
