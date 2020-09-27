@@ -5,12 +5,10 @@ using namespace std;
 struct FreqNode;
 
 struct Node{
-    string key;   
-    string val;
-
+    string key;
+    string val;   
     Node *up;
     Node *down;
-
     FreqNode *slot;
     Node(const string &k, const string &v):key(k),val(v){
         slot = nullptr;
@@ -20,11 +18,9 @@ struct Node{
 };
 
 struct FreqNode{
+    int freq;
     FreqNode *prev;
     FreqNode *post;
-
-    int freq;
-
     Node *first;
     Node *last;
 
@@ -100,7 +96,7 @@ struct LFUCache{
             tmp->post = br->post;
             br->post->prev = tmp;
         }
-        tmp->prev = br->prev;
+        tmp->prev = br;
         br->post = tmp;
     }
 
@@ -128,7 +124,7 @@ struct LFUCache{
 
     void inc_freq(Node *node){
         node->slot->remove(node);
-        int freq = node->slot->freq + 1;
+        const int freq = node->slot->freq + 1;
         if(node->slot->post == nullptr || node->slot->post->freq != freq){
             add_slot(node->slot, freq);
         }

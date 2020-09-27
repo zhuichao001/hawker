@@ -5,7 +5,7 @@
 void display(LFUCache *lfu){
     FreqNode *cur = lfu->freq_list.post;
     while(cur!=nullptr){
-        cout<<"freq:"<<cur->freq<<"|";
+        cout<<"freq "<<cur->freq<<":";
         Node *node = cur->first;
         while(node!=nullptr){
            cout<<"("<<node->key<<","<<node->val<<"),"; 
@@ -14,6 +14,7 @@ void display(LFUCache *lfu){
         cout<<endl;
         cur = cur->post;
     }
+    cout<<endl;
 }
 
 void test_lfu(){
@@ -24,6 +25,8 @@ void test_lfu(){
     display(&lfu);
 
     lfu.put("a", "399"); 
+    display(&lfu);
+
     string v1;
     lfu.get("a", v1);
     cout<<"val of a:"<<v1<<endl;
@@ -32,7 +35,6 @@ void test_lfu(){
     string v2;
     lfu.get("b", v2);
     cout<<"val of b:"<<v2<<endl;
-
     display(&lfu);
 }
 
