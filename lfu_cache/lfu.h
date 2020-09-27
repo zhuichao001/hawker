@@ -10,6 +10,7 @@ struct Node{
     Node *up;
     Node *down;
     FreqNode *slot;
+
     Node(const string &k, const string &v):key(k),val(v){
         slot = nullptr;
         up = nullptr; 
