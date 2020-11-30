@@ -27,7 +27,6 @@ void* consume(void *arg){
     for(int i=0; i<JOBS*NP/NC; ){
         char *data = r->list->pop();
         if(data==nullptr){
-            //printf("pop null, retry...\n");
             continue;
         }
         ++i;
