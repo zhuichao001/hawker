@@ -7,7 +7,11 @@ struct Node{
 	Node *left;
     Node *right;
     int val;
-    Node(int v){val=v; left=right=NULL;}
+    Node(int v){
+        val = v; 
+        left = NULL;
+        right=NULL;
+    }
 };
 
 
@@ -30,17 +34,17 @@ int countNodes(Node *root){
         return int(pow(2, lh)-1);
     }
 
-    return 1+countNodes(root->left)+countNodes(root->right);
+    return 1 + countNodes(root->left) + countNodes(root->right);
 }
 
 
 int main(){
     Node a(2), b(3), c(4), d(5), e(7), f(8);
-    b.left=&a;
-    b.right=&c;
-    d.left=&b;
-    d.right=&f;
-    f.left=&e;
+    b.left = &a;
+    b.right = &c;
+    d.left = &b;
+    d.right = &f;
+    f.left = &e;
     printf("count of binary tree:%d\n", countNodes(&d));
     return 0;
 }
