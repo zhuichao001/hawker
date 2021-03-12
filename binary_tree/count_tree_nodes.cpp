@@ -4,7 +4,7 @@
 //完全二叉树的节点数量
 
 struct Node{
-	Node *left;
+    Node *left;
     Node *right;
     int val;
     Node(int v){

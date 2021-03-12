@@ -17,7 +17,7 @@ int skiplist::rand_level(){
 node *skiplist::search(string k){
     node *cur = this->head;
     for(int i=this->height-1; i>=0; --i){
-		while(cur->forwards[i]->key<k){
+        while(cur->forwards[i]->key<k){
             cur = cur->forwards[i];
         }
         if(cur->forwards[i]->key==k){

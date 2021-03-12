@@ -13,7 +13,7 @@ const(
 )
 
 func HashInt(str string) uint32 {
-	return crc32.ChecksumIEEE([]byte(str))
+    return crc32.ChecksumIEEE([]byte(str))
 }
 
 type Item struct {
