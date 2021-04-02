@@ -22,7 +22,6 @@ Node *mergeLink(Node *a, Node *b){
     Node *tail = &rope;
 
     while(a!=NULL && b!=NULL){
-        Node * poped = NULL;
         if (a->val <= b->val) {
             tail->next = a;
             a = a->next;
