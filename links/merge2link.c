@@ -10,49 +10,32 @@ struct Node{
 };
 
 
-Node *mergeLink(Node *linka, Node *linkb){
-    if (linka==NULL) {
-        return linkb;
+Node *mergeLink(Node *a, Node *b){
+    if (a == NULL) {
+        return b;
     }
-    if (linkb==NULL) {
-        return linka;
+    if (b == NULL) {
+        return a;
     }
 
-    Node *head = NULL;
-    Node *tail = NULL;
-    Node *a = linka;
-    Node *b = linkb;
-
-    if (a->val <= b->val) {
-        head = tail = a;
-        a = a->next;
-    } else {
-        head = tail = b;
-        b = b->next;
-    }
+    Node rope; //head:=rope.next
+    Node *tail = &rope;
 
     while(a!=NULL && b!=NULL){
-        Node * poped = NULL;
         if (a->val <= b->val) {
-            poped = a;
+            tail->next = a;
             a = a->next;
         } else {
-            poped = b;
+            tail->next = b;
             b = b->next;
         }
-        
-        if (head==NULL) {
-            head = tail = poped;
-        }
-        tail->next = poped;
         tail = tail->next;
     }
-    tail->next = (a==NULL)?b:a;
-    return head;
+    tail->next = a!=NULL?a:b;
+    return rope.next;
 }
 
-
-int main(){
+void test(){
     Node linka[4], linkb[5];
     for(int i=0;i<3;++i){
         linka[i].next = &linka[i+1];
@@ -73,4 +56,10 @@ int main(){
         head = head->next;
     }
     printf("NULL\n");
+}
+
+
+int main(){
+    test();
+    return 0;
 }
