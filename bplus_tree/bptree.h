@@ -21,7 +21,6 @@ public:
     virtual bool full() =0;
     virtual bool empty() =0;
     virtual bpnode * split() =0;
-    //virtual int merge() = 0;
     virtual int release() =0;
     virtual int get(string key, string &val) =0;
     virtual int put(string key, string val) =0;
@@ -30,19 +29,24 @@ public:
 
 class bpjunc: public bpnode{
 public:
+    bpjunc(){
+    }
+    virtual ~bpjunc(){
+        childs.clear();
+    }
     vector<bpnode*> childs;
 
     bpnode * descend(string k);
     int adopt(bpnode * son);
     int abandon(bpnode * son);
 
-    virtual ~bpjunc(){childs.clear();}
     virtual bool isleaf(){return false;}
     virtual bool isroot(){return parent==nullptr;}
     virtual bool full(){return childs.size() >= ROADS;}
     virtual bool empty(){return childs.empty();}
     virtual bpnode * split();
     virtual int release();
+
     virtual int get(string key, string &val);
     virtual int put(string key, string val);
     virtual int del(string key);
@@ -72,6 +76,7 @@ public:
 };
 
 class bptree{
+    bpnode *root;
     bpleaf * find(string key);
     int splitby(bpnode *node);
     bpnode * findlower(string key);
@@ -83,8 +88,6 @@ public:
     ~bptree(){
         delete root;
     }
-
-    bpnode *root;
 
     int get(string key, string &val);
     int put(string key, string val);
