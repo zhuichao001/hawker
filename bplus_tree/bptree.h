@@ -6,7 +6,7 @@ using namespace std;
 
 namespace bplus_tree {
 
-const int ROADS = 16;
+const int ROADS = 4;
 
 class bpnode{
 public:
@@ -21,10 +21,6 @@ public:
     virtual bool full() =0;
     virtual bool empty() =0;
     virtual bpnode * split() =0;
-    virtual int release() =0;
-    virtual int get(string key, string &val) =0;
-    virtual int put(string key, string val) =0;
-    virtual int del(string key) =0;
 };
 
 class bpjunc: public bpnode{
@@ -45,11 +41,6 @@ public:
     virtual bool full(){return childs.size() >= ROADS;}
     virtual bool empty(){return childs.empty();}
     virtual bpnode * split();
-    virtual int release();
-
-    virtual int get(string key, string &val);
-    virtual int put(string key, string val);
-    virtual int del(string key);
 };
 
 class bpleaf: public bpnode{
@@ -68,11 +59,10 @@ public:
     virtual bool full(){return kvgroup.size() >= ROADS;}
     virtual bool empty(){return kvgroup.size()==0;}
     virtual bpnode * split();
-    virtual int release();
 
-    virtual int get(string key, string &val);
-    virtual int put(string key, string val);
-    virtual int del(string key);
+    int get(string key, string &val);
+    int put(string key, string val);
+    int del(string key);
 };
 
 class bptree{

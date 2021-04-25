@@ -21,11 +21,6 @@ bpnode * bpjunc::split(){
     return apart;
 }
 
-int bpjunc::release(){
-    childs.clear();
-    return 0;
-}
-
 bpnode * bpjunc::descend(string key){
     const int len = childs.size();
     if(childs.size()==0 || key<childs[0]->minkey){
@@ -84,66 +79,6 @@ int bpjunc::abandon(bpnode * son){
     return 0;
 }
 
-int bpjunc::get(string key, string &val){
-    const int len = childs.size();
-    if(childs.size()==0 || key<childs[0]->minkey){
-        return -1;
-    }
-
-    for(int i=0; i<len-1; ++i){
-        if(key>=childs[i]->minkey && key<childs[i+1]->minkey){
-            return childs[i]->get(key, val);
-        }
-    }
-    return childs[len-1]->get(key, val);
-}
-
-int bpjunc::put(string key, string val){
-    const int len = childs.size();
-    if(childs.size()==0 || key<childs[0]->minkey){
-        return -1;
-    }
-
-    for(int i=0; i<len-1; ++i){
-        if(key>=childs[i]->minkey && key<childs[i+1]->minkey){
-            childs[i]->put(key, val);
-        }
-    }
-    childs[len-1]->put(key, val);
-    if(full()){
-        bpnode *grand = parent==nullptr? new bpjunc:parent;
-        bpnode *apart = split();
-        dynamic_cast<bpjunc*>(grand)->adopt(this);
-        dynamic_cast<bpjunc*>(grand)->adopt(apart);
-    }
-    return 0;
-}
-
-int bpjunc::del(string key){
-    const int len = childs.size();
-    if(childs.size()==0 || key<childs[0]->minkey){
-        return -1;
-    }
-
-    int i = -1;
-    for(i=0; i<len-1; ++i){
-        if(key>=childs[i]->minkey && key<childs[i+1]->minkey){
-            break;
-        }
-    }
-    childs[i]->del(key);
-
-    bpnode * node = childs[i];
-    if(node->empty() && !node->isroot()){
-        dynamic_cast<bpjunc*>(node->parent)->abandon(node);
-        bpnode *tmp = node;
-        node = node->parent;
-        tmp->release();
-        delete tmp;
-    }
-    return 0;
-}
-
 bpnode * bpleaf::split(){
     vector<string> keys;
     for(auto it=kvgroup.begin(); it!=kvgroup.end(); ++it){
@@ -157,13 +92,6 @@ bpnode * bpleaf::split(){
         this->del(*it);
     }
     return apart;
-}
-
-int bpleaf::release(){
-    if(!kvgroup.empty()){
-        return -1;
-    }
-    return 0;
 }
 
 int bpleaf::get(string key, string &val){
@@ -206,15 +134,12 @@ int bpleaf::del(string key){
 }
 
 int bptree::get(string key, string &val){
-    /*
     bpnode *node = findlower(key);
     bpnode *dst = dynamic_cast<bpjunc*>(node)->descend(key);
     if(dst==nullptr){
         return -1;
     }
     return dynamic_cast<bpleaf*>(dst)->get(key, val);
-    */
-    return root->get(key,val);
 }
 
 bpnode * bptree::findlower(string key){
@@ -222,10 +147,7 @@ bpnode * bptree::findlower(string key){
     bpnode *son = nullptr;
     while(true){
         son = dynamic_cast<bpjunc*>(cur)->descend(key);
-        if(son==nullptr){
-            break;
-        }
-        if(son->isleaf()){
+        if(son==nullptr || son->isleaf()){
             break;
         }
         cur = son;
@@ -234,7 +156,6 @@ bpnode * bptree::findlower(string key){
 }
 
 int bptree::put(string key, string val){
-    /*
     bpnode *node = findlower(key);
     bpnode *dst = dynamic_cast<bpjunc*>(node)->descend(key);
     if(dst==nullptr){
@@ -249,8 +170,8 @@ int bptree::put(string key, string val){
     dynamic_cast<bpleaf*>(dst)->put(key, val);
     if(dst->full()){
         splitby(dst);
-    }*/
-    return root->put(key,val);
+    }
+    return 0;
 }
 
 int bptree::splitby(bpnode *node){
@@ -275,7 +196,6 @@ int bptree::splitby(bpnode *node){
 }
 
 int bptree::del(string key){
-    /*
     bpnode *node = findlower(key);
     bpnode *dst = dynamic_cast<bpjunc*>(node)->descend(key);
     if(dst==nullptr){
@@ -283,17 +203,13 @@ int bptree::del(string key){
     }
     dynamic_cast<bpleaf*>(dst)->del(key);
 
-    node = dst;
-    while(node->empty() && node!=root){
-        dynamic_cast<bpjunc*>(node->parent)->abandon(node);
-        bpnode *tmp = node;
-        node = node->parent;
-        tmp->release();
+    while(dst->empty() && dst!=root){
+        dynamic_cast<bpjunc*>(dst->parent)->abandon(dst);
+        bpnode *tmp = dst;
+        dst = dst->parent;
         delete tmp;
     }
-    */
-    return root->del(key);
-
+    return 0;
 }
 
 int bptree::scan(string lower, string upper){
