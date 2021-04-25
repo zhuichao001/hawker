@@ -9,6 +9,7 @@ bpnode * bpjunc::split(){
         apart->childs.push_back(*it);
         childs.erase(it);
     }
+    apart->level = this->level;
     apart->minkey = apart->childs[0]->minkey;
     apart->parent = this->parent;
 
@@ -43,6 +44,10 @@ int bpjunc::adopt(bpnode * son){
         son->next = nullptr;
         son->parent = this;
         return 0;
+    }
+
+    if(this->empty()){
+        minkey = son->minkey;
     }
 
     vector<bpnode*>::iterator it = childs.begin();
@@ -87,6 +92,7 @@ bpnode * bpleaf::split(){
     sort(keys.begin(), keys.end());
     string midkey = keys[keys.size()/2];
     bpleaf *apart = new bpleaf;
+    apart->level = this->level;
     for(auto it=keys.begin(); it!=keys.end(); ++it){
         apart->put(*it, kvgroup[*it]);
         this->del(*it);
@@ -110,17 +116,16 @@ int bpleaf::put(string key, string val){
         return 0;
     }
 
-    if(key<minkey){
+    if(minkey==UNDEFINED_KEY){
+        minkey = key;
+    }else if (key<minkey){
         return -1;
     }
-
     kvgroup[key] = val;
-
     if(full()){
         bpnode *apart = split();
         dynamic_cast<bpjunc*>(parent)->adopt(apart);
     }
-
     return 0;
 }
 
@@ -160,6 +165,7 @@ int bptree::put(string key, string val){
     bpnode *dst = dynamic_cast<bpjunc*>(node)->descend(key);
     if(dst==nullptr){
         bpleaf *leaf = new bpleaf;
+        leaf->level = node->level + 1;
         leaf->put(key, val);
         dynamic_cast<bpjunc*>(node)->adopt(leaf);
         if(node->full()){
@@ -214,6 +220,29 @@ int bptree::del(string key){
 
 int bptree::scan(string lower, string upper){
     //TODO next version
+    return 0;
+}
+
+int bptree::print(){
+    list<bpnode *> nodes;
+    nodes.push_back(root);
+    int round = 0;
+    while(!nodes.empty()){
+        bpnode * tmp = nodes.front();
+        nodes.pop_front();
+        if(tmp->level > round){
+            ++round;
+            printf("\n");
+        }
+        printf("<key:%s, level:%d> ", tmp->minkey.c_str(), tmp->level);
+        if(!tmp->isleaf()){
+            bpjunc *node = dynamic_cast<bpjunc*>(tmp);
+            for(auto it = node->childs.begin(); it!=node->childs.end(); ++it){
+                nodes.push_back(*it);
+            }
+        }
+    }
+    printf("\n");
     return 0;
 }
 

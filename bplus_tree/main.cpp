@@ -6,6 +6,7 @@ using namespace bplus_tree;
 int test(){
     bptree tree;
     tree.put("a", "123");
+    tree.print();
     string val;
     tree.get("a", val);
     printf("val:%s\n", val.c_str());

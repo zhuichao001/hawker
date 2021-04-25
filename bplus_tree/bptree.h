@@ -1,5 +1,6 @@
 #include <string>
 #include <map>
+#include <list>
 #include <algorithm>
 
 using namespace std;
@@ -7,13 +8,23 @@ using namespace std;
 namespace bplus_tree {
 
 const int ROADS = 4;
+const string UNDEFINED_KEY = "[[UNDEFINED_KEY]]";
 
 class bpnode{
 public:
+    int level;
     string minkey;
     bpnode *parent;
     bpnode *prev;
     bpnode *next;
+
+    bpnode(){
+        level = 0;
+        minkey = UNDEFINED_KEY;
+        parent = nullptr;
+        prev = nullptr;
+        next = nullptr;
+    }
 
     virtual ~bpnode(){}
     virtual bool isleaf() =0;
@@ -83,6 +94,9 @@ public:
     int put(string key, string val);
     int del(string key);
     int scan(string lower, string upper);
+
+    //debug
+    int print();
 };
 
 }; //end of namespace bplus_tree
