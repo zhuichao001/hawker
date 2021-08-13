@@ -27,11 +27,11 @@ public:
     }
 
     virtual ~bpnode(){}
-    virtual bool isleaf() =0;
-    virtual bool isroot() =0;
-    virtual bool full() =0;
-    virtual bool empty() =0;
-    virtual bpnode * split() =0;
+    virtual bool isleaf() = 0;
+    virtual bool isroot() = 0;
+    virtual bool full() = 0;
+    virtual bool empty() = 0;
+    virtual bpnode * split() = 0;
 };
 
 class bpjunc: public bpnode{
@@ -95,7 +95,6 @@ public:
     int del(string key);
     int scan(string lower, string upper);
 
-    //debug
     int print();
 };
 
