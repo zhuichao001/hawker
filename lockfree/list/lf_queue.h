@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <assert.h>
 
-//typedef unsigned long long uint64_t;
-
 const int MSG_LEN=64;
 
 struct node {
