@@ -1,6 +1,6 @@
 #include <string.h>
 #include <pthread.h>
-#include "lf_queue.h"
+#include "list.h"
 
 const int NP = 30;
 const int NC = 20;
@@ -9,7 +9,7 @@ const int JOBS = 10000;
 
 struct worker{
     char name[16];
-    lf_queue *list;
+    List *list;
 };
 
 void* produce(void *arg){
@@ -35,7 +35,7 @@ void* consume(void *arg){
 }
 
 int main(int argc, char *argv[]){
-    lf_queue *queue = new lf_queue();
+    List *list = new List();
 
     pthread_t rid[NC];
     pthread_t wid[NP];
@@ -44,12 +44,12 @@ int main(int argc, char *argv[]){
     
     for(int i = 0; i < NP; ++i){
         sprintf(w[i].name,  "producer.%d", i);
-        w[i].list = queue;
+        w[i].list = list;
         pthread_create(&wid[i], nullptr, produce, &w[i]);
     }
     for(int j = 0; j < NC; ++j){
         sprintf(r[j].name,  "consumer.%d", j);
-        r[j].list = queue;
+        r[j].list = list;
         pthread_create(&rid[j], nullptr, consume, &r[j]);
     }
 
@@ -60,6 +60,6 @@ int main(int argc, char *argv[]){
         pthread_join(rid[j], nullptr);
     }
 
-    delete queue;
+    delete list;
     return 0;
 }
