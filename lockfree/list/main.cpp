@@ -26,8 +26,9 @@ void* produce(void *arg){
 void* consume(void *arg){
     worker * r = (worker*)arg;
     for(int i=0; i<JOBS*NP/NC; ){
-        std::string *data = r->list->pop();
-        if(data==nullptr){
+        std::string *data;
+        bool ok = r->list->pop(&data);
+        if(!ok){
             continue;
         }
         ++i;

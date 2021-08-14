@@ -9,27 +9,22 @@ class node {
 public:
     node * next;
     T *val;
-    ~node(){
-        if(val){
-            delete val;
-        }
-    }
 };
 
 
 template<class T>
 class List {
-    node<T> *head;
+    node<T> *head, _;
     node<T> *tail;
 public:
 
     List() {
-        head = tail = new node<T>();
+        head = tail = &_;
         head->next = nullptr;
     }
 
     ~List(){
-        node<T> *cur = head;
+        node<T> *cur = head->next;
         while(cur){
             node<T> *next = cur->next;
             delete cur;
@@ -68,16 +63,20 @@ public:
         __sync_bool_compare_and_swap((uint64_t**)(&tail), (uint64_t*)last, (uint64_t*)e);
     }
 
-    T *pop() {
-        node<T> *first = nullptr;
+    bool pop(T **t) {
+        node<T> *first=nullptr, *second=nullptr;
         do{
-            first = head;
-            if (first->next == nullptr){
-                return nullptr;
+            first = head->next;
+            if (first == nullptr){
+                return false;
             }
-        } while( !__sync_bool_compare_and_swap((uint64_t**)(&head), (uint64_t*)first, (uint64_t*)(first->next)) );
-        T *ret= first->next->val;
+            second = first->next;
+        } while( !__sync_bool_compare_and_swap((uint64_t**)(&head->next), (uint64_t*)first, (uint64_t*)(second)) );
+        *t = first->val;
+        if(first==tail){
+            tail = head;
+        }
         delete first;
-        return ret;
+        return true;
     }
 };
