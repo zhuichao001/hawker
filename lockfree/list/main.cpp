@@ -1,4 +1,4 @@
-#include <string.h>
+#include <string>
 #include <pthread.h>
 #include "list.h"
 
@@ -9,7 +9,7 @@ const int JOBS = 10000;
 
 struct worker{
     char name[16];
-    List *list;
+    List<std::string> *list;
 };
 
 void* produce(void *arg){
@@ -17,7 +17,8 @@ void* produce(void *arg){
     for(int i=0; i<JOBS; ){
         char data[64];
         sprintf(data, "[%s] job:%d", w->name, i);
-        w->list->push(data);
+        std::string *e = new std::string(data);
+        w->list->push(e);
         ++i;
     }
 }
@@ -25,17 +26,17 @@ void* produce(void *arg){
 void* consume(void *arg){
     worker * r = (worker*)arg;
     for(int i=0; i<JOBS*NP/NC; ){
-        char *data = r->list->pop();
+        std::string *data = r->list->pop();
         if(data==nullptr){
             continue;
         }
         ++i;
-        fprintf(stderr, "[%s] consume msg:%s\n", r->name, data);
+        fprintf(stderr, "[%s] consume msg:%s\n", r->name, data->c_str());
     }
 }
 
 int main(int argc, char *argv[]){
-    List *list = new List();
+    List<std::string> *list = new List<std::string>;
 
     pthread_t rid[NC];
     pthread_t wid[NP];
