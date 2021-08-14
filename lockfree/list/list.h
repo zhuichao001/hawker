@@ -11,6 +11,7 @@ struct node_t {
     char data[MSG_LEN];
 };
 
+//LIFO
 struct List {
     node_t *head;
     node_t *tail;
