@@ -9,9 +9,17 @@ public:
         FLAG_READING = 3,
     };
 
-    Ring(int n):
-        capacity_(n){
+    Ring(int n=0){
+        if(n<=0){
+            n = 16;
+        }
+
+        int e=1;
+        for(; e<n; e<<=1);        
+        capacity_ = e;
+        mask_ = capacity_-1;
         num_ = 0;
+
         head_ = 0;
         tail_ = 0;
 
@@ -40,7 +48,8 @@ public:
             flag = flags_ +  idx;
         }
 
-        int tail = (idx + 1) % capacity_;
+        // equal to (idx + 1) % capacity_
+        int tail = (idx + 1) & mask_; 
         //maybe has been updated by other thread
         __sync_bool_compare_and_swap(&tail_, idx, tail);
 
@@ -65,7 +74,7 @@ public:
             flag = flags_ + idx;
         }
 
-        int head = (idx + 1) % capacity_;
+        int head = (idx + 1) & mask_;
         __sync_bool_compare_and_swap(&head_, idx, head);
 
         *e = *(array_ + idx);
@@ -79,8 +88,11 @@ public:
 private:
     T * array_;
     FLAG_STATE * flags_;
-    int capacity_;  
+
+    int capacity_;
+    int mask_;  
     int num_; 
+
     int head_;
     int tail_;
 };
