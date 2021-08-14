@@ -1,4 +1,6 @@
+#include <memory.h>
 
+//FIFO
 template<class T>
 class Ring {
 public:
