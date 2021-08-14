@@ -15,8 +15,8 @@ struct worker{
 
 void* produce(void *arg){
     worker * w = (worker*)arg;
+    char data[64];
     for(int i=0; i<JOBS; ){
-        char data[64];
         sprintf(data, "[%s] job:%d", w->name, i);
         if( !w->ring->push(data) ){
             continue;
@@ -27,8 +27,8 @@ void* produce(void *arg){
 
 void* consume(void *arg){
     worker * r = (worker*)arg;
+    std::string out;
     for(int i=0; i<JOBS*NP/NC; ){
-        std::string out;
         if(!r->ring->pop(&out)){
             continue;
         }
@@ -38,7 +38,7 @@ void* consume(void *arg){
 }
 
 int main(int argc, char *argv[]){
-    Ring<std::string> *ring = new Ring<std::string>(100);
+    Ring<std::string> *ring = new Ring<std::string>(1000);
 
     pthread_t rid[NC];
     pthread_t wid[NP];
