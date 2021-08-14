@@ -64,14 +64,14 @@ public:
     }
 
     bool pop(T **t) {
-        node<T> *first=nullptr, *second=nullptr;
+        node<T> *first=nullptr;
         do{
             first = head->next;
             if (first == nullptr){
                 return false;
             }
-            second = first->next;
-        } while( !__sync_bool_compare_and_swap((uint64_t**)(&head->next), (uint64_t*)first, (uint64_t*)(second)) );
+        } while( !__sync_bool_compare_and_swap((uint64_t**)(&head->next), (uint64_t*)first, (uint64_t*)(first->next)) );
+
         *t = first->val;
         if(first==tail){
             tail = head;
