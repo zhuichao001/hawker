@@ -2,6 +2,8 @@
 
 - **A STAR(A*)**
 - **LRU CACHE**
+- **LFU CACHE**
+- **LOCK FREE(list/array)**
 - **QUIC SORT**
 - **CONSISTENT HASH**
 - **FREE LOCK RING BUFFER**
@@ -21,5 +23,4 @@
 - **BIG PRIMES**
 - **BLOOM FILTER**
 - **C++11 ADVANCED FEATURES**
-- **LFU CACHE**
 - **B+ TREE**
