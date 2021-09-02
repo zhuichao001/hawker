@@ -1,20 +1,7 @@
 #include "skiplist.h"
-#include <stdlib.h>
-#include <iostream>
-
-using namespace std;
 
 
-int skiplist::rand_level(){
-    int h = 1;
-    while(h<this->maxheight && rand()%BRANCHING==0){
-        ++h;
-    }
-    return h;
-}
-
-
-node *skiplist::search(string k){
+node *skiplist::search(const string &k){
     node *cur = this->head;
     for(int i=this->height-1; i>=0; --i){
         while(cur->forwards[i]->key<k){
@@ -24,11 +11,11 @@ node *skiplist::search(string k){
             return cur->forwards[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 
-node *skiplist::insert(string k, const string &v){
+node *skiplist::insert(const string &k, const string &v){
     node *updates[this->maxheight];
     node *cur = this->head;
 
@@ -43,13 +30,13 @@ node *skiplist::insert(string k, const string &v){
         cur->forwards[0]->val = v;
         return cur->forwards[0];
     } else { //insert
-        int level = this->rand_level();
+        int level = rand_level();
         for(int i=this->height; i<level; ++i) {
             updates[i] = this->head;
         }
         this->height = level>this->height?level:this->height;
         
-        node * tmp=new node(k,v,level);
+        node * tmp = new node(level, k, v);
         for(int i=0; i<level; ++i){
             tmp->forwards[i] = updates[i]->forwards[i];
             updates[i]->forwards[i] = tmp;
@@ -58,8 +45,9 @@ node *skiplist::insert(string k, const string &v){
     }
 }
 
+
 void skiplist::print(){
-    cout<<"----level:"<<this->height<<endl;;
+    cout << "level:" << this->height << endl;
     for(int i=this->height-1; i>=0; --i){
         node *cur = this->head;
         while(cur != this->nil){

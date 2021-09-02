@@ -1,4 +1,4 @@
 all:
-	g++ -g -o main skiplist.cpp main.cpp
+	g++ -g -O2 -o run skiplist.cpp main.cpp -lpthread --std=c++11
 clean:
-	rm -f main
+	rm -f run

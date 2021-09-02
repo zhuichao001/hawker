@@ -49,10 +49,10 @@ void test(){
 
     node *t = sk->search("e");
     if (t==NULL){
-        cout<<" not foud " <<endl;
+        cout << " not foud " << endl;
         return;
     }
-    cout<<t->key<<" "<<t->val<<endl;
+    cout << t->key << " " << t->val << endl;
 }
 
 int main(){
