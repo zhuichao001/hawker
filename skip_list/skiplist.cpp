@@ -16,32 +16,33 @@ node *skiplist::search(const string &k){
 
 
 node *skiplist::insert(const string &k, const string &v){
-    node *updates[this->maxheight];
+    node *updates[this->MAXHEIGHT];
     node *cur = this->head;
 
     for(int i=this->height-1; i>=0; --i){
         while(cur->forwards[i]->key < k){
             cur = cur->forwards[i];
         }
-        updates[i]=cur;
+        updates[i] = cur;
     }
 
     if(cur->forwards[0]->key==k) { //update
         cur->forwards[0]->val = v;
         return cur->forwards[0];
     } else { //insert
-        int level = rand_level();
+        const int level = rand_level();
         for(int i=this->height; i<level; ++i) {
             updates[i] = this->head;
         }
-        this->height = level>this->height?level:this->height;
+
+        this->height = level>this->height ? level : this->height;
         
-        node * tmp = new node(level, k, v);
+        node * neo = new node(level, k, v);
         for(int i=0; i<level; ++i){
-            tmp->forwards[i] = updates[i]->forwards[i];
-            updates[i]->forwards[i] = tmp;
+            neo->forwards[i] = updates[i]->forwards[i];
+            updates[i]->forwards[i] = neo;
         }
-        return tmp;
+        return neo;
     }
 }
 

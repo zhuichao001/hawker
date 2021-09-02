@@ -10,8 +10,6 @@
 using namespace std;
 
 
-const int MAX_HEIGHT = 8;
-const int BRANCHING = 3;
 
 
 struct node {
@@ -24,29 +22,36 @@ struct node {
         key(k),
         val(v){
         forwards = new node*[level];
+        for(int i=0; i<level; ++i){
+            forwards[i] = nullptr;
+        }
     }
 };
 
 struct skiplist {
     node *head;
     node *nil;
+
     int length;
     int height;
-    int maxheight;
 
-    skiplist(int maxh):
-        maxheight(maxh){
+    const int MAXHEIGHT;
+    const int BRANCHING;
+
+    skiplist(int maxh, int branch):
+        MAXHEIGHT(maxh),
+        BRANCHING(branch){
         height = 1;
-        head = new node(maxheight, "");
-        nil = new node(maxheight, std::string(2048, '\xff')); 
-        for(int i=0; i<maxheight; ++i){
+        head = new node(MAXHEIGHT, "");
+        nil = new node(MAXHEIGHT, std::string(2048, '\xff')); 
+        for(int i=0; i<MAXHEIGHT; ++i){
             head->forwards[i] = nil;
         }
     }
 
     int rand_level(){
         int h = 1;
-        while(h < maxheight && rand()%BRANCHING == 0){
+        while(h < MAXHEIGHT && rand()%BRANCHING == 0){
             ++h;
         }
         return h;

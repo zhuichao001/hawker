@@ -5,7 +5,7 @@ using namespace std;
 
 
 void test(){
-    skiplist *sk = new skiplist(6);
+    skiplist *sk = new skiplist(8, 4);
     sk->insert("u","85");
     sk->insert("c","3");
     sk->insert("d","4");
