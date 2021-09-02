@@ -8,7 +8,7 @@ template<class T>
 class node {
 public:
     node * next;
-    T *val;
+    T val;
 };
 
 
@@ -36,7 +36,7 @@ public:
         return head->next == nullptr;
     }
 
-    void push(T *t) {
+    void push(T t) {
         node<T> * e = new node<T>();
         e->next = nullptr;
         e->val = t;
@@ -63,7 +63,7 @@ public:
         __sync_bool_compare_and_swap((uint64_t**)(&tail), (uint64_t*)last, (uint64_t*)e);
     }
 
-    bool pop(T **t) {
+    bool pop(T *t) {
         node<T> *first=nullptr;
         do{
             first = head->next;
@@ -72,10 +72,12 @@ public:
             }
         } while( !__sync_bool_compare_and_swap((uint64_t**)(&head->next), (uint64_t*)first, (uint64_t*)(first->next)) );
 
-        *t = first->val;
+        first->next = nullptr;
         if(first==tail){
             tail = head;
         }
+
+        *t = first->val;
         delete first;
         return true;
     }

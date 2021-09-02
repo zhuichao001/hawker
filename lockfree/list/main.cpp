@@ -9,7 +9,7 @@ const int JOBS = 10000;
 
 struct worker{
     char name[16];
-    List<std::string> *list;
+    List<std::string*> *list;
 };
 
 void* produce(void *arg){
@@ -33,11 +33,12 @@ void* consume(void *arg){
         }
         ++i;
         fprintf(stderr, "[%s] consume msg:%s\n", r->name, data->c_str());
+        delete data;
     }
 }
 
 int main(int argc, char *argv[]){
-    List<std::string> *list = new List<std::string>;
+    List<std::string*> *list = new List<std::string*>;
 
     pthread_t rid[NC];
     pthread_t wid[NP];
