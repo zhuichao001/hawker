@@ -3,7 +3,7 @@
 - **A STAR(A*)**
 - **LRU CACHE**
 - **LFU CACHE**
-- **LOCK FREE(list/array)**
+- **LOCK FREE(list/ring-buffer)**
 - **QUIC SORT**
 - **CONSISTENT HASH**
 - **FREE LOCK RING BUFFER**
