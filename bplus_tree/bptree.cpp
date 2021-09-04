@@ -204,6 +204,7 @@ int bptree::put(const string &key, const string &val){
     return 0;
 }
 
+//TODO debug
 int bptree::del(const string &key){
     if(_root->isleaf()){
         dynamic_cast<bpleaf*>(_root)->del(key);
@@ -212,13 +213,12 @@ int bptree::del(const string &key){
 
     bpnode *node = findbottom(key);
     bpnode *dst = dynamic_cast<bpindex*>(node)->descend(key);
-    if(dst==nullptr){
-        return -1;
-    }
+    
+    assert(dst!=nullptr);
 
     dynamic_cast<bpleaf*>(dst)->del(key);
 
-    while(dst->empty()){
+    while(dst->empty() && !dst->isroot()){
         dynamic_cast<bpindex*>(dst->parent())->erase(dst);
         bpnode * rabish = dst;
         dst = dst->parent();

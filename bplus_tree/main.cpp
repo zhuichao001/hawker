@@ -12,8 +12,6 @@ int test(){
     //tree.put("g", "1001");
     tree.print();
 
-    return 0;
-
     string val;
     tree.get("a", val);
     printf("val:%s !!!!!! \n", val.c_str());
