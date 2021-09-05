@@ -18,16 +18,16 @@ bpnode * bpindex::descend(const string &key){
 int bpindex::insert(bpnode * after_son, bpnode * new_son){
     assert(!full());
 
-    printf("after son:%p, size=%d\n", after_son, _size);
+    //printf("after son:%p, size=%d\n", after_son, _size);
     int pos = -1;
     for(int i=0; i<=_size; ++i){
         if(after_son==_childs[i]){
             pos = i;
             break;
         }
-        printf("child:%p ", _childs[i]);
+        //printf("child:%p ", _childs[i]);
     }
-    printf("\n");
+    //printf("\n");
 
     assert(pos!=-1);
 

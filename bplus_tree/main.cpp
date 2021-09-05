@@ -1,7 +1,16 @@
 #include "bptree.h"
 #include <stdio.h>
+#include <functional>
+#include <random>
 
-int test(){
+int randint(){
+    static std::default_random_engine generator;
+    static std::uniform_int_distribution<int> distribution(1, 99999999);
+    auto dice = std::bind(distribution, generator);
+    return dice();
+}
+
+int test1(){
     bptree tree;
     tree.put("a", "123");
     tree.put("b", "456");
@@ -9,7 +18,6 @@ int test(){
     tree.put("d", "888");
     tree.put("e", "999");
     tree.put("f", "1000");
-    //tree.put("g", "1001");
     tree.print();
 
     string val;
@@ -25,7 +33,28 @@ int test(){
     return 0;
 }
 
+int test2(){
+    bptree tree;
+    int total=0, suc =0;
+    for(int i=0; i<2000000; ++i){
+        string key("_key_."), val("_val_.");
+        key += std::to_string(randint());
+        val += std::to_string(randint());
+        tree.put(key, val);
+
+        total += 1;
+        
+        string real;
+        tree.get(key, real);
+        if(real==val){
+            suc+=1;
+        }
+    }
+    printf("FINISH total:%d suc:%d \n", total, suc);
+    return 0;
+}
+
 int main(){
-    test();
+    test2();
     return 0;
 }
