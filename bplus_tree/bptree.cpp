@@ -1,6 +1,6 @@
 #include "bptree.h"
 #include <assert.h>
-
+#include <functional>
 
 bpnode * bpindex::descend(const string &key){
     if(_size==0){
@@ -83,6 +83,36 @@ bpnode * bpindex::divide(){
     return neo;
 }
 
+bpnode * bpindex::left(){
+    if(_parent==nullptr){
+        return nullptr;
+    }
+
+    bpindex *parent = dynamic_cast<bpindex*>(_parent);
+    bpnode **first = parent->_childs;
+    bpnode **last = parent->_childs+(parent->_size-1);
+    bpnode **dst = std::find(first, last, this);
+    if(dst==nullptr || dst==first){
+        return nullptr;
+    }
+    return *(dst-1);
+}
+
+bpnode * bpindex::right(){
+    if(_parent==nullptr){
+        return nullptr;
+    }
+
+    bpindex *parent = dynamic_cast<bpindex*>(_parent);
+    bpnode **first = parent->_childs;
+    bpnode **last = parent->_childs+(parent->_size-1);
+    bpnode **dst = std::find(first, last, this);
+    if(dst==nullptr || dst==last){
+        return nullptr;
+    }
+    return *(dst+1);
+}
+
 //--------------------------------------------
 
 bpnode * bpleaf::divide(){
@@ -154,6 +184,21 @@ int bpleaf::del(const string &key){
     _size -= 1;
 
     return 0;
+}
+
+bpnode * bpleaf::left(){
+    if(_parent==nullptr){
+        return nullptr;
+    }
+
+    bpindex *parent = dynamic_cast<bpindex*>(_parent);
+    bpnode **first = parent->_childs;
+    bpnode **last = parent->_childs+(parent->_size-1);
+    bpnode **dst = std::find(first, last, this);
+    if(dst==nullptr || dst==first){
+        return nullptr;
+    }
+    return *(dst-1);
 }
 
 //--------------------------------------------

@@ -11,7 +11,6 @@ const string UNDEFINED_KEY = "[[BPLUS-TREE-UNDEFINED-KEY]]";
 class bpindex;
 
 class bpnode{
-    friend class bptree;
 public:
     bpnode():
         _parent(nullptr),
@@ -25,6 +24,8 @@ public:
     virtual string minkey() = 0;
     virtual string maxkey() = 0;
     virtual bpnode * divide() = 0;
+    virtual bpnode * left() = 0;
+    virtual bpnode * right() = 0;
     virtual void print() = 0;
     bpindex * parent(){ return _parent; }
     void set_parent(bpindex *p){ _parent=p; }
@@ -34,8 +35,6 @@ public:
 
 class bpindex: public bpnode{
 public:
-    friend class bptree;
-
     bpindex(){ 
     }
 
@@ -62,8 +61,9 @@ public:
     virtual string minkey(){return _size>0 ? _childs[0]->minkey() : "";}
     virtual string maxkey(){return _size>0 ? _childs[_size-1]->maxkey() : string(128,'\xff');}
     virtual bpnode * divide();
-
-    void print(){
+    virtual bpnode * left();
+    virtual bpnode * right();
+    virtual void print(){
         printf("[index node]: %p \n", this);
         for(int i=0; i<_size; ++i){
             printf("  index:%s  ", _index[i].c_str());
@@ -74,14 +74,11 @@ public:
         }
         printf("\n");
     }
-private:
     string _index[ROADS];
     bpnode* _childs[ROADS+1];
 };
 
 class bpleaf: public bpnode{
-    friend class bptree;
-
 public:
     bpleaf():
         bpnode(),
@@ -98,19 +95,20 @@ public:
     virtual string minkey(){return _size>0 ? _keys[0]:"";}
     virtual string maxkey(){return _size>0 ? _keys[_size-1]:"";}
     virtual bpnode * divide();
+    virtual bpnode * left();
+    virtual bpnode * right(){return _next;}
 
     int get(const string &key, string &val);
     int put(const string &key, const string &val);
     int del(const string &key);
 
-    void print(){
+    virtual void print(){
         printf("leaf: %p size:%d next:%p parent:%p \n", this, _size, _next, _parent);
         for(int i=0; i<_size; ++i){
             printf("  %s->%s  ", _keys[i].c_str(), _dats[i].c_str());
         }
         printf("\n");
     }
-private:
     bpleaf *_next;
     string _keys[ROADS];
     string _dats[ROADS];
