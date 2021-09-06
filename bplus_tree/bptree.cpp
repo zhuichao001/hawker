@@ -83,7 +83,20 @@ bpnode * bpindex::divide(){
     return neo;
 }
 
-bpnode * bpindex::left(){
+void bpindex::extend(bpnode *rsib){
+    assert(_size+rsib->_size<=ROADS);
+
+    bpindex *from = dynamic_cast<bpindex *>(rsib);
+    _index[_size] = from->_childs[0]->minkey();
+    for(int i=0; i<from->_size; ++i){
+        _index[_size+1+i] = from->_index[i];
+        _childs[_size+1+i] = from->_childs[i];
+    }
+    _childs[_size+1+from->_size] = from->_childs[from->_size];
+    _size += 1+from->_size;
+}
+
+bpnode * bpindex::leftsib(){
     if(_parent==nullptr){
         return nullptr;
     }
@@ -98,7 +111,7 @@ bpnode * bpindex::left(){
     return *(dst-1);
 }
 
-bpnode * bpindex::right(){
+bpnode * bpindex::rightsib(){
     if(_parent==nullptr){
         return nullptr;
     }
@@ -111,6 +124,63 @@ bpnode * bpindex::right(){
         return nullptr;
     }
     return *(dst+1);
+}
+
+void bpindex::borrowfirst(bpnode *from){
+    bpindex *rb = dynamic_cast<bpindex*>(from);
+    bpnode *child = rb->_childs[0];
+    _index[_size] = child->minkey();
+    _childs[_size+1] = child;
+    _size += 1;
+
+    rb->_size -=1;
+    for(int i=0; i<rb->_size; ++i){
+        rb->_index[i] = rb->_index[i+1];
+        rb->_childs[i] = rb->_childs[i+1];
+    }
+    rb->_childs[rb->_size] = rb->_childs[rb->_size+1];
+}
+
+void bpindex::borrowlast(bpnode *from){
+    bpindex *lb = dynamic_cast<bpindex*>(from);
+    bpnode *child = lb->_childs[lb->_size];
+    _childs[_size+1] = _childs[_size];
+    for(int i=_size; i>0; --i){
+        _index[i] = _index[i-1];
+        _childs[i] = _childs[i-1];
+    }
+    _index[0] = child->minkey();
+    _childs[0] = child;
+    _size += 1;
+
+    lb->_size -= 1;
+}
+
+int bpindex::merge(bpnode * lson, bpnode * rson){
+    bpnode **dst = std::find(_childs, _childs+_size, lson);
+    assert(lson==rson+1);
+
+    int pos = dst-_childs;
+    for(int i=pos; i<_size; ++i){
+        _index[i] = _index[i+1];
+        _childs[i+1] = _childs[i+2];
+    }
+    _size -= 1;
+
+    lson->extend(rson);
+    return 0;
+}
+
+void bpindex::print(){
+    printf("[index node]: %p \n", this);
+    for(int i=0; i<_size; ++i){
+        printf("  index:%s  ", _index[i].c_str());
+    }
+    printf("\n");
+    for(int i=0; i<=_size; ++i){
+        printf("  child:%p  ", _childs[i]);
+    }
+    printf("\n");
 }
 
 //--------------------------------------------
@@ -128,6 +198,17 @@ bpnode * bpleaf::divide(){
     neo->_next = this->_next;
     this->_next = neo;
     return neo;
+}
+
+void bpleaf::extend(bpnode *rsib){
+    assert(_size+rsib->_size<=ROADS);
+
+    bpleaf *from = dynamic_cast<bpleaf *>(rsib);
+    for(int i=0; i<from->_size; ++i){
+        _keys[_size+i] = from->_keys[i];
+        _dats[_size+i] = from->_dats[i];
+    }
+    _size += from->_size;
 }
 
 int bpleaf::get(const string &key, string &val){
@@ -186,7 +267,7 @@ int bpleaf::del(const string &key){
     return 0;
 }
 
-bpnode * bpleaf::left(){
+bpnode * bpleaf::leftsib(){
     if(_parent==nullptr){
         return nullptr;
     }
@@ -199,6 +280,40 @@ bpnode * bpleaf::left(){
         return nullptr;
     }
     return *(dst-1);
+}
+
+void bpleaf::borrowfirst(bpnode *from){
+    bpleaf *rb = dynamic_cast<bpleaf*>(from);
+    _keys[_size] = rb->_keys[0];
+    _dats[_size] = rb->_keys[0];
+    _size += 1;
+
+    rb->_size -=1;
+    for(int i=0; i<rb->_size; ++i){
+        rb->_keys[i] = rb->_keys[i+1];
+        rb->_dats[i] = rb->_dats[i+1];
+    }
+}
+
+void bpleaf::borrowlast(bpnode *from){
+    bpleaf *lb = dynamic_cast<bpleaf*>(from);
+    string k = lb->_keys[0];
+    string v = lb->_dats[0];
+    lb->_size -= 1;
+
+    for(int i=_size; i>0; --i){
+        _keys[i] = _keys[i-1];
+        _dats[i] = _dats[i-1];
+    }
+    _size += 1;
+}
+
+void bpleaf::print(){
+    printf("leaf: %p size:%d next:%p parent:%p \n", this, _size, _next, _parent);
+    for(int i=0; i<_size; ++i){
+        printf("  %s->%s  ", _keys[i].c_str(), _dats[i].c_str());
+    }
+    printf("\n");
 }
 
 //--------------------------------------------
@@ -249,37 +364,89 @@ int bptree::put(const string &key, const string &val){
     return 0;
 }
 
-//TODO debug
 int bptree::del(const string &key){
     if(_root->isleaf()){
-        dynamic_cast<bpleaf*>(_root)->del(key);
-        return 0;
+        return dynamic_cast<bpleaf*>(_root)->del(key);
     }
 
     bpnode *node = findbottom(key);
     bpnode *dst = dynamic_cast<bpindex*>(node)->descend(key);
+
+    int err = dynamic_cast<bpleaf*>(dst)->del(key);
+    if(err<0){
+        return err;
+    }
+
+    if(dynamic_cast<bpleaf*>(dst)->balanced()){
+        return 0;
+    }
     
-    assert(dst!=nullptr);
-
-    dynamic_cast<bpleaf*>(dst)->del(key);
-
-    while(dst->empty() && !dst->isroot()){
-        dynamic_cast<bpindex*>(dst->parent())->erase(dst);
-        bpnode * rabish = dst;
+    while(dst!=nullptr){
+        if(dst->balanced()){
+            break;
+        }
+        rebalance(dst);
         dst = dst->parent();
-        delete rabish;
     }
 
-    if(dst->isroot() && dst->_size==1){
-         bpnode * rabish = _root;
-        _root = dynamic_cast<bpindex*>(_root)->_childs[0];
-        delete rabish;
-    }
     return 0;
 }
 
 int bptree::scan(const string &start, const string &end){
     //TODO next version
+    return 0;
+}
+
+int bptree::rebalance(bpnode *node){
+    if(node->balanced()){
+        return 0;
+    }
+
+    bpnode *ln = node->leftsib();
+    bpnode *rn = node->rightsib();
+
+    if(ln==nullptr && rn==nullptr){
+        assert(node->parent()->isroot());
+        _root = node;
+        return 0;
+    }
+
+    Reaction action = NOTHING;
+    if(ln!=nullptr && rn!=nullptr){
+        if(ln->redundant()){
+            action = BORROW_LEFT;
+        }else if(rn->redundant()){
+            action = BORROW_RIGHT;
+        }else{
+            action = MERGE_LEFT;
+        }
+    }
+    if(ln==nullptr && rn!=nullptr){
+        if(rn->redundant()){
+            action = BORROW_RIGHT;
+        }else{
+            action = MERGE_RIGHT;
+        }
+    }
+    if(ln!=nullptr && rn==nullptr){
+        if(ln->redundant()){
+            action = BORROW_LEFT;
+        }else{
+            action = MERGE_LEFT;
+        }
+    }
+
+    if(action==BORROW_LEFT){
+        node->borrowlast(ln);
+    }else if(action==BORROW_RIGHT){
+        node->borrowfirst(rn);
+    }else if(action==MERGE_LEFT){
+        node->parent()->merge(rn, ln);
+        delete ln;
+    }else if(action==MERGE_RIGHT){
+        node->parent()->merge(ln, rn);
+        delete rn;
+    }
     return 0;
 }
 
@@ -327,6 +494,6 @@ int bptree::print(){
             }
         }
     }
-    printf("end print tree===========================\n");
+    printf("end print tree...........................\n");
     return 0;
 }
