@@ -1,6 +1,5 @@
 #include "bptree.h"
 #include <stdio.h>
-#include <functional>
 #include <random>
 
 int randint(){
@@ -21,7 +20,7 @@ int test1(){
     printf("\nWHEN put a,b,c,d,e,f\n");
     tree.print();
 
-    string val;
+    std::string val;
     tree.get("a", val);
     printf("val:%s !!!!!! \n", val.c_str());
 
@@ -40,14 +39,14 @@ int test2(){
     bptree tree;
     int total=0, suc =0;
     for(int i=0; i<2000000; ++i){
-        string key("_key_."), val("_val_.");
+        std::string key("_key_."), val("_val_.");
         key += std::to_string(randint());
         val += std::to_string(randint());
         tree.put(key, val);
 
         total += 1;
         
-        string real;
+        std::string real;
         tree.get(key, real);
         if(real==val){
             suc+=1;

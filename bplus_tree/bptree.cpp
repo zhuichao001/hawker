@@ -1,8 +1,8 @@
 #include "bptree.h"
-#include <assert.h>
-#include <functional>
+#include <list>
 
-bpnode * bpindex::descend(const string &key){
+
+bpnode * bpindex::descend(const std::string &key){
     if(_size==0){
         return nullptr;
     }
@@ -25,7 +25,6 @@ int bpindex::insert(bpnode * after_son, bpnode * new_son){
             break;
         }
     }
-
     assert(pos!=-1);
 
     for(int i=_size; i>pos; --i){
@@ -215,7 +214,7 @@ void bpleaf::extend(bpnode *rsib){
     from->_size = 0;
 }
 
-int bpleaf::get(const string &key, string &val){
+int bpleaf::get(const std::string &key, std::string &val){
     for(int i=0; i<ROADS; ++i){
         if(key==_keys[i]){
             val = _dats[i];
@@ -225,7 +224,7 @@ int bpleaf::get(const string &key, string &val){
     return -1;
 }
 
-int bpleaf::put(const string &key, const string &val){
+int bpleaf::put(const std::string &key, const std::string &val){
     if(full()){
         return -1;
     }
@@ -250,7 +249,7 @@ int bpleaf::put(const string &key, const string &val){
     return 0;
 }
 
-int bpleaf::del(const string &key){
+int bpleaf::del(const std::string &key){
     int pos = -1;
     for(int i=0; i<_size; ++i){
         if(key==_keys[i]){
@@ -301,8 +300,8 @@ void bpleaf::borrowfirst(bpnode *from){
 
 void bpleaf::borrowlast(bpnode *from){
     bpleaf *lb = dynamic_cast<bpleaf*>(from);
-    string k = lb->_keys[0];
-    string v = lb->_dats[0];
+    std::string k = lb->_keys[0];
+    std::string v = lb->_dats[0];
     lb->_size -= 1;
 
     for(int i=_size; i>0; --i){
@@ -322,7 +321,7 @@ void bpleaf::print(){
 
 //--------------------------------------------
 
-bpnode * bptree::findbottom(const string &key){
+bpnode * bptree::findbottom(const std::string &key){
     bpnode *cur = _root;
     bpnode *son = nullptr;
     while(true){
@@ -335,7 +334,7 @@ bpnode * bptree::findbottom(const string &key){
     return cur;
 }
 
-int bptree::get(const string &key, string &val){
+int bptree::get(const std::string &key, std::string &val){
     if(_root->isleaf()){
         return dynamic_cast<bpleaf*>(_root)->get(key, val);
     }
@@ -348,7 +347,7 @@ int bptree::get(const string &key, string &val){
     return dynamic_cast<bpleaf*>(dst)->get(key, val);
 }
 
-int bptree::put(const string &key, const string &val){
+int bptree::put(const std::string &key, const std::string &val){
     if(_root->isleaf()){
         dynamic_cast<bpleaf*>(_root)->put(key, val);
         if(_root->full()){
@@ -359,7 +358,6 @@ int bptree::put(const string &key, const string &val){
 
     bpindex *node = dynamic_cast<bpindex*>(findbottom(key));
     bpleaf *leaf = dynamic_cast<bpleaf*>(node->descend(key));
-    //fprintf(stderr, "when put %s, node=%p, leaf=%p\n", key.c_str(), node, leaf);
 
     leaf->put(key, val);
 
@@ -369,7 +367,7 @@ int bptree::put(const string &key, const string &val){
     return 0;
 }
 
-int bptree::del(const string &key){
+int bptree::del(const std::string &key){
     if(_root->isleaf()){
         return dynamic_cast<bpleaf*>(_root)->del(key);
     }
@@ -395,7 +393,7 @@ int bptree::del(const string &key){
     return 0;
 }
 
-int bptree::scan(const string &start, const string &end){
+int bptree::scan(const std::string &start, const std::string &end){
     //TODO next version
     return 0;
 }
@@ -472,7 +470,7 @@ int bptree::split(bpnode *orig){
 }
 
 int bptree::print(){
-    list<std::pair<bpnode *, int>> nodes;
+    std::list<std::pair<bpnode *, int>> nodes;
     nodes.push_back(std::pair<bpnode *, int>(_root, 1));
     int round = 0;
     while(!nodes.empty()){
@@ -495,6 +493,6 @@ int bptree::print(){
             }
         }
     }
-    printf("end print tree...........................\n");
+    printf("END PRINT TREE......\n");
     return 0;
 }
