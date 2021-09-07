@@ -5,7 +5,7 @@
 int randint(){
     static std::default_random_engine generator;
     static std::uniform_int_distribution<int> distribution(1, 99999999);
-    auto dice = std::bind(distribution, generator);
+    static auto dice = std::bind(distribution, generator);
     return dice();
 }
 
@@ -40,6 +40,29 @@ int test1(){
     return 0;
 }
 
+int test1_1(){
+    bptree *tree = new bptree;
+    tree->put("a", "123");
+    tree->put("b", "456");
+    tree->put("c", "789");
+    tree->put("d", "888");
+    printf("\nWHEN put a,b,c,d\n");
+    tree->print();
+
+    std::string val;
+    tree->get("d", val);
+    printf("val:%s !!!!!! \n", val.c_str());
+
+    tree->del("d");
+    printf("\nWHEN del d\n");
+    tree->print();
+
+    tree->del("c");
+    printf("\nWHEN del c\n");
+    tree->print();
+    return 0;
+}
+
 int test2(){
     bptree tree;
     int total=0, suc =0;
@@ -61,6 +84,28 @@ int test2(){
     return 0;
 }
 
+int test2_1(){
+    bptree tree;
+    const int N = 10;
+    std::string keys[N]{"d", "b", "a", "c", "f", "g", "h", "i", "m", "k"};
+    for(int i=0; i<N; ++i){
+        tree.put(keys[i], keys[i]);
+    }
+
+    printf("\n");
+    tree.print();
+
+    for(int i=0; i<N; ++i){
+        printf("i=%d, to del:%s\n", i, keys[i].c_str());
+        tree.del(keys[i]);
+        printf("\nWHEN del %s\n", keys[i].c_str());
+        tree.print();
+    }
+
+    printf("FINISH \n");
+    return 0;
+}
+
 int test3(){
     bptree *tree = gentree();
     std::vector<kvpair> vec;
@@ -73,6 +118,6 @@ int test3(){
 }
 
 int main(){
-    test3();
+    test2_1();
     return 0;
 }

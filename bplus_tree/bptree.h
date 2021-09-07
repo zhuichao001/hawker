@@ -18,19 +18,21 @@ public:
         _size(0){
     }
     virtual ~bpnode(){}
-    virtual bool isleaf() = 0;
-    virtual bool isroot() = 0;
-    virtual std::string minkey() = 0;
-    virtual std::string maxkey() = 0;
-    virtual bpnode * divide() = 0;
-    virtual void extend(bpnode *) = 0;
-    virtual bpnode * leftsib() = 0;
-    virtual bpnode * rightsib() = 0;
+    virtual bool isleaf() =0;
+    virtual bool isroot() =0;
+    virtual std::string minkey() =0;
+    virtual std::string maxkey() =0;
+
+    virtual bpnode * divide() =0;
+    virtual void extend(bpnode *) =0;
     virtual void borrowfirst(bpnode *) =0;
     virtual void borrowlast(bpnode *) =0;
-    virtual bool balanced() = 0;
-    virtual bool redundant() = 0;
-    virtual void print() = 0;
+    virtual bool balanced() =0;
+    virtual bool redundant() =0;
+    virtual void print() =0;
+
+    bpnode * leftsib();
+    bpnode * rightsib();
 
     bool full(){return _size == ROADS;}
     bool empty(){return _size == 0;}
@@ -61,20 +63,20 @@ public:
     virtual bool isroot(){return _parent==nullptr;}
     virtual std::string minkey(){return _size>0 ? _childs[0]->minkey() : "";}
     virtual std::string maxkey(){return _size>0 ? _childs[_size-1]->maxkey() : std::string(128,'\xff');}
+
     virtual bpnode * divide();
     virtual void extend(bpnode *);
-    virtual bpnode * leftsib();
-    virtual bpnode * rightsib();
     virtual void borrowfirst(bpnode *);
     virtual void borrowlast(bpnode *);
     virtual bool balanced(){return _size >= ROADS/2;}
-    virtual bool redundant(){return _size >= ROADS/2;}
+    virtual bool redundant(){return _size > ROADS/2;}
     virtual void print();
 
     bpnode * descend(const std::string &k);
     int insert(bpnode * after_son, bpnode * new_son);
     int erase(bpnode * son);
     int merge(bpnode * lson, bpnode * rson);
+    int offset(bpnode *son);
 
     std::string _index[ROADS];
     bpnode* _childs[ROADS+1];
@@ -94,14 +96,13 @@ public:
     virtual bool isroot(){return _parent==nullptr;}
     virtual std::string minkey(){return _size>0 ? _keys[0]:"";}
     virtual std::string maxkey(){return _size>0 ? _keys[_size-1]:"";}
+
     virtual bpnode * divide();
     virtual void extend(bpnode *);
-    virtual bpnode * leftsib();
-    virtual bpnode * rightsib(){return _next;}
     virtual void borrowfirst(bpnode *);
     virtual void borrowlast(bpnode *);
     virtual bool balanced(){return _size >= ROADS/2;}
-    virtual bool redundant(){return _size-1 >= ROADS/2;}
+    virtual bool redundant(){return _size > ROADS/2;}
     virtual void print();
 
     int get(const std::string &key, std::string &val);
@@ -121,7 +122,7 @@ class bptree{
 
     enum Reaction{NOTHING=0, BORROW_LEFT, BORROW_RIGHT, MERGE_LEFT, MERGE_RIGHT};
 
-    int rebalance(bpnode *node);
+    bpnode * rebalance(bpnode *node);
 public:
     bptree(){
         _root = new bpleaf;
