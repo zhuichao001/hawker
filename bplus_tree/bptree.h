@@ -123,6 +123,7 @@ class bptree{
     enum Reaction{NOTHING=0, BORROW_LEFT, BORROW_RIGHT, MERGE_LEFT, MERGE_RIGHT};
 
     bpnode * rebalance(bpnode *node);
+    void upindex(bpnode *node);
 public:
     bptree(){
         _root = new bpleaf;

@@ -86,10 +86,14 @@ int test2(){
 
 int test2_1(){
     bptree tree;
-    const int N = 10;
-    std::string keys[N]{"d", "b", "a", "c", "f", "g", "h", "i", "m", "k"};
+    const int N = 1000;
+    std::string keys[N];
     for(int i=0; i<N; ++i){
-        tree.put(keys[i], keys[i]);
+        std::string key("_key_."), val("_val_.");
+        key += std::to_string(randint());
+        val += std::to_string(randint());
+        tree.put(key, val);
+        keys[i] = key;
     }
 
     printf("\n");

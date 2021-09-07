@@ -118,8 +118,11 @@ void bpindex::extend(bpnode *rsib){
     for(int i=0; i<from->_size; ++i){
         _index[_size+1+i] = from->_index[i];
         _childs[_size+1+i] = from->_childs[i];
+        from->_childs[i]->_parent = this;
     }
     _childs[_size+1+from->_size] = from->_childs[from->_size];
+    from->_childs[from->_size]->_parent = this;
+
     _size += 1+from->_size;
 }
 
@@ -137,12 +140,6 @@ void bpindex::borrowfirst(bpnode *from){
         rb->_childs[i] = rb->_childs[i+1];
     }
     rb->_childs[rb->_size] = rb->_childs[rb->_size+1];
-
-    //update parent index
-    bpindex *parent = dynamic_cast<bpindex*>(this->parent());
-    bpnode ** dst = std::find(parent->_childs, parent->_childs+parent->_size, this);
-    int pos = dst-parent->_childs;
-    parent->_index[pos] = rb->minkey();
 }
 
 void bpindex::borrowlast(bpnode *from){
@@ -159,19 +156,6 @@ void bpindex::borrowlast(bpnode *from){
     _index[0] = _childs[1]->minkey();
     _childs[0] = child;
     _size += 1;
-
-    //update parent index
-    bpindex *parent = dynamic_cast<bpindex*>(this->parent());
-    int pos = 0;
-    do{
-        bpnode ** dst = std::find(parent->_childs, parent->_childs+parent->_size, this);
-        int pos = dst-parent->_childs;
-        if(pos>0){
-            parent->_index[pos-1] = this->minkey();
-            break;
-        }
-        parent = parent->parent();
-    }while(pos==0 && parent!=nullptr);
 }
 
 int bpindex::offset(bpnode *son){
@@ -195,7 +179,7 @@ int bpindex::merge(bpnode * lson, bpnode * rson){
 }
 
 void bpindex::print(){
-    printf("[index node]: %p \n", this);
+    printf("[index node]: %p parent: %p\n", this, _parent);
     for(int i=0; i<_size; ++i){
         printf("  index:%s  ", _index[i].c_str());
     }
@@ -387,7 +371,7 @@ int bptree::del(const std::string &key){
         print();
     }
 
-    printf("node:%p, dst:%p\n", node, dst);
+    printf("node:%p, dst:%p, %s\n", node, dst, dst->isleaf()?"leaf":"index");
 
     int err = dynamic_cast<bpleaf*>(dst)->del(key);
     if(err<0){
@@ -401,6 +385,7 @@ int bptree::del(const std::string &key){
         }
         if(dst==_root){
             _root = dynamic_cast<bpindex*>(dst)->_childs[0];
+            _root->_parent = nullptr;
             delete dst;
             break;
         }
@@ -441,6 +426,7 @@ bpnode * bptree::rebalance(bpnode *node){
 
     if(ln==nullptr && rn==nullptr){
         _root = node;
+        _root->_parent = nullptr;
         return node;
     }
 
@@ -472,9 +458,11 @@ bpnode * bptree::rebalance(bpnode *node){
 
     if(action==BORROW_LEFT){
         node->borrowlast(ln);
+        upindex(node);
         return node;
     }else if(action==BORROW_RIGHT){
         node->borrowfirst(rn);
+        upindex(rn);
         return node;
     }else if(action==MERGE_LEFT){
         node->parent()->merge(ln, node);
@@ -486,6 +474,23 @@ bpnode * bptree::rebalance(bpnode *node){
         return node;
     }
     return node;
+}
+
+void bptree::upindex(bpnode *node){
+    //update parent index
+    bpindex *parent = dynamic_cast<bpindex*>(node->parent());
+    while(parent!=nullptr){
+        int pos = parent->offset(node);
+        if(pos>0){
+            printf("pos:%d, parent:%p, node:%p\n", pos, parent, node);
+            parent->_index[pos-1] = node->minkey();
+        }
+        if(pos!=1){
+            break;
+        }
+        node = parent;
+        parent = parent->parent();
+    }
 }
 
 int bptree::split(bpnode *orig){
