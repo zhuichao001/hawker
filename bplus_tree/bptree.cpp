@@ -393,8 +393,24 @@ int bptree::del(const std::string &key){
     return 0;
 }
 
-int bptree::scan(const std::string &start, const std::string &end){
-    //TODO next version
+int bptree::scan(const std::string &start, const std::string &end, std::vector<kvpair> &res){
+    bpnode *node = findbottom(start);
+    bpleaf *dst = dynamic_cast<bpleaf*>(dynamic_cast<bpindex*>(node)->descend(start));
+    if(dst==nullptr){
+        return -1;
+    }
+
+    while(dst!=nullptr){
+        for(int i=0; i<dst->_size; ++i){
+            if(dst->_keys[i] > end){
+                return 0;
+            }
+            if(dst->_keys[i]>=start){
+                res.push_back(std::make_pair(dst->_keys[i], dst->_dats[i]));
+            }
+        }
+        dst = dst->_next;
+    }
     return 0;
 }
 

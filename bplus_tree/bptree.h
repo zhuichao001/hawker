@@ -7,6 +7,8 @@
 const int ROADS = 3;
 const std::string UNDEFINED_KEY = "[[BPLUS-TREE-UNDEFINED-KEY]]";
 
+typedef std::pair<std::string, std::string> kvpair;
+
 class bpindex;
 
 class bpnode{
@@ -132,7 +134,7 @@ public:
     int get(const std::string &key, std::string &val);
     int put(const std::string &key, const std::string &val);
     int del(const std::string &key);
-    int scan(const std::string &start, const std::string &end/*, vector<std::pastd::string> &data*/);
+    int scan(const std::string &start, const std::string &end, std::vector<kvpair> &res);
 
     int print();
 };

@@ -9,28 +9,33 @@ int randint(){
     return dice();
 }
 
+bptree * gentree(){
+    bptree *tree = new bptree;
+    tree->put("a", "123");
+    tree->put("b", "456");
+    tree->put("c", "789");
+    tree->put("d", "888");
+    tree->put("e", "999");
+    tree->put("f", "1000");
+    return tree;
+}
+
 int test1(){
-    bptree tree;
-    tree.put("a", "123");
-    tree.put("b", "456");
-    tree.put("c", "789");
-    tree.put("d", "888");
-    tree.put("e", "999");
-    tree.put("f", "1000");
+    bptree *tree = gentree();
     printf("\nWHEN put a,b,c,d,e,f\n");
-    tree.print();
+    tree->print();
 
     std::string val;
-    tree.get("a", val);
+    tree->get("a", val);
     printf("val:%s !!!!!! \n", val.c_str());
 
-    tree.del("a");
+    tree->del("a");
     printf("\nWHEN del a\n");
-    tree.print();
+    tree->print();
 
-    tree.put("a", "234");
+    tree->put("a", "234");
     printf("\nWHEN put a\n");
-    tree.print();
+    tree->print();
 
     return 0;
 }
@@ -56,7 +61,18 @@ int test2(){
     return 0;
 }
 
+int test3(){
+    bptree *tree = gentree();
+    std::vector<kvpair> vec;
+    tree->scan("a", "g", vec);
+    for(int i=0; i<int(vec.size()); ++i){
+        printf("%s:%s ", vec[i].first.c_str(), vec[i].second.c_str());
+    }
+    printf("FINISH scan\n");
+    return 0;
+}
+
 int main(){
-    test1();
+    test3();
     return 0;
 }
