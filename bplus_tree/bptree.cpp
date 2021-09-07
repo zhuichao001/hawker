@@ -18,16 +18,13 @@ bpnode * bpindex::descend(const string &key){
 int bpindex::insert(bpnode * after_son, bpnode * new_son){
     assert(!full());
 
-    //printf("after son:%p, size=%d\n", after_son, _size);
     int pos = -1;
     for(int i=0; i<=_size; ++i){
         if(after_son==_childs[i]){
             pos = i;
             break;
         }
-        //printf("child:%p ", _childs[i]);
     }
-    //printf("\n");
 
     assert(pos!=-1);
 
@@ -118,7 +115,7 @@ bpnode * bpindex::rightsib(){
 
     bpindex *parent = dynamic_cast<bpindex*>(_parent);
     bpnode **first = parent->_childs;
-    bpnode **last = parent->_childs+(parent->_size-1);
+    bpnode **last = parent->_childs+(parent->_size+1);
     bpnode **dst = std::find(first, last, this);
     if(dst==nullptr || dst==last){
         return nullptr;
@@ -129,6 +126,7 @@ bpnode * bpindex::rightsib(){
 void bpindex::borrowfirst(bpnode *from){
     bpindex *rb = dynamic_cast<bpindex*>(from);
     bpnode *child = rb->_childs[0];
+    child->_parent = this;
     _index[_size] = child->minkey();
     _childs[_size+1] = child;
     _size += 1;
@@ -139,11 +137,18 @@ void bpindex::borrowfirst(bpnode *from){
         rb->_childs[i] = rb->_childs[i+1];
     }
     rb->_childs[rb->_size] = rb->_childs[rb->_size+1];
+
+    //update parent index
+    bpindex *parent = dynamic_cast<bpindex*>(this->parent());
+    bpnode ** dst = std::find(parent->_childs, parent->_childs+parent->_size, this);
+    int pos = dst-parent->_childs;
+    parent->_index[pos] = rb->minkey();
 }
 
 void bpindex::borrowlast(bpnode *from){
     bpindex *lb = dynamic_cast<bpindex*>(from);
     bpnode *child = lb->_childs[lb->_size];
+    child->_parent = this;
     _childs[_size+1] = _childs[_size];
     for(int i=_size; i>0; --i){
         _index[i] = _index[i-1];
@@ -157,13 +162,11 @@ void bpindex::borrowlast(bpnode *from){
 }
 
 int bpindex::merge(bpnode * lson, bpnode * rson){
-    bpnode **dst = std::find(_childs, _childs+_size, lson);
-    assert(lson==rson+1);
-
+    bpnode **dst = std::find(_childs, _childs+_size, rson);
     int pos = dst-_childs;
     for(int i=pos; i<_size; ++i){
-        _index[i] = _index[i+1];
-        _childs[i+1] = _childs[i+2];
+        _index[i-1] = _index[i];
+        _childs[i] = _childs[i+1];
     }
     _size -= 1;
 
@@ -209,6 +212,7 @@ void bpleaf::extend(bpnode *rsib){
         _dats[_size+i] = from->_dats[i];
     }
     _size += from->_size;
+    from->_size = 0;
 }
 
 int bpleaf::get(const string &key, string &val){
@@ -355,6 +359,7 @@ int bptree::put(const string &key, const string &val){
 
     bpindex *node = dynamic_cast<bpindex*>(findbottom(key));
     bpleaf *leaf = dynamic_cast<bpleaf*>(node->descend(key));
+    //fprintf(stderr, "when put %s, node=%p, leaf=%p\n", key.c_str(), node, leaf);
 
     leaf->put(key, val);
 
@@ -377,14 +382,12 @@ int bptree::del(const string &key){
         return err;
     }
 
-    if(dynamic_cast<bpleaf*>(dst)->balanced()){
-        return 0;
-    }
-    
+    int n=1;
     while(dst!=nullptr){
         if(dst->balanced()){
             break;
         }
+        printf("rebalance time:%d\n", n++);
         rebalance(dst);
         dst = dst->parent();
     }
@@ -398,15 +401,11 @@ int bptree::scan(const string &start, const string &end){
 }
 
 int bptree::rebalance(bpnode *node){
-    if(node->balanced()){
-        return 0;
-    }
-
     bpnode *ln = node->leftsib();
     bpnode *rn = node->rightsib();
+    printf("node:%p, left:%p, right:%p\n", node, ln, rn);
 
     if(ln==nullptr && rn==nullptr){
-        assert(node->parent()->isroot());
         _root = node;
         return 0;
     }
@@ -435,18 +434,20 @@ int bptree::rebalance(bpnode *node){
             action = MERGE_LEFT;
         }
     }
+    printf("action:%d\n", action);
 
     if(action==BORROW_LEFT){
         node->borrowlast(ln);
     }else if(action==BORROW_RIGHT){
         node->borrowfirst(rn);
     }else if(action==MERGE_LEFT){
-        node->parent()->merge(rn, ln);
-        delete ln;
+        node->parent()->merge(ln, node);
+        delete node;
     }else if(action==MERGE_RIGHT){
-        node->parent()->merge(ln, rn);
+        node->parent()->merge(node, rn);
         delete rn;
     }
+
     return 0;
 }
 

@@ -18,6 +18,7 @@ int test1(){
     tree.put("d", "888");
     tree.put("e", "999");
     tree.put("f", "1000");
+    printf("\nWHEN put a,b,c,d,e,f\n");
     tree.print();
 
     string val;
@@ -25,9 +26,11 @@ int test1(){
     printf("val:%s !!!!!! \n", val.c_str());
 
     tree.del("a");
+    printf("\nWHEN del a\n");
     tree.print();
 
     tree.put("a", "234");
+    printf("\nWHEN put a\n");
     tree.print();
 
     return 0;
@@ -55,6 +58,6 @@ int test2(){
 }
 
 int main(){
-    test2();
+    test1();
     return 0;
 }

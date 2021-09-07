@@ -19,8 +19,6 @@ public:
     virtual ~bpnode(){}
     virtual bool isleaf() = 0;
     virtual bool isroot() = 0;
-    virtual bool full() = 0;
-    virtual bool empty() = 0;
     virtual string minkey() = 0;
     virtual string maxkey() = 0;
     virtual bpnode * divide() = 0;
@@ -32,8 +30,12 @@ public:
     virtual bool balanced() = 0;
     virtual bool redundant() = 0;
     virtual void print() = 0;
+
+    bool full(){return _size == ROADS;}
+    bool empty(){return _size == 0;}
     bpindex * parent(){ return _parent; }
     void set_parent(bpindex *p){ _parent=p; }
+
     bpindex *_parent;
     int _size;
 };
@@ -56,8 +58,6 @@ public:
 
     virtual bool isleaf(){return false;}
     virtual bool isroot(){return _parent==nullptr;}
-    virtual bool full(){return _size == ROADS;}
-    virtual bool empty(){return _size == 0;}
     virtual string minkey(){return _size>0 ? _childs[0]->minkey() : "";}
     virtual string maxkey(){return _size>0 ? _childs[_size-1]->maxkey() : string(128,'\xff');}
     virtual bpnode * divide();
@@ -66,7 +66,7 @@ public:
     virtual bpnode * rightsib();
     virtual void borrowfirst(bpnode *);
     virtual void borrowlast(bpnode *);
-    virtual bool balanced(){return _size+1 >= ROADS/2;}
+    virtual bool balanced(){return _size >= ROADS/2;}
     virtual bool redundant(){return _size >= ROADS/2;}
     virtual void print();
 
@@ -91,8 +91,6 @@ public:
     
     virtual bool isleaf(){return true;}
     virtual bool isroot(){return _parent==nullptr;}
-    virtual bool full(){return _size == ROADS;}
-    virtual bool empty(){return _size == 0;}
     virtual string minkey(){return _size>0 ? _keys[0]:"";}
     virtual string maxkey(){return _size>0 ? _keys[_size-1]:"";}
     virtual bpnode * divide();
@@ -120,7 +118,7 @@ class bptree{
     int split(bpnode *orig);
     bpnode * findbottom(const string &key);
 
-    enum Reaction{NOTHING, BORROW_LEFT, BORROW_RIGHT, MERGE_LEFT, MERGE_RIGHT};
+    enum Reaction{NOTHING=0, BORROW_LEFT, BORROW_RIGHT, MERGE_LEFT, MERGE_RIGHT};
 
     int rebalance(bpnode *node);
 public:
