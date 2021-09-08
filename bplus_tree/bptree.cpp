@@ -106,7 +106,7 @@ bpnode * bpindex::divide(){
     }
     neo->_childs[j] = _childs[_size];
     neo->_childs[j]->_parent = neo;
-    neo->_size = _size/2;
+    neo->_size = (_size-1)/2;
     _size = _size/2;
     return neo;
 }
@@ -382,9 +382,11 @@ int bptree::del(const std::string &key){
             break;
         }
         if(dst==_root){
-            _root = dynamic_cast<bpindex*>(dst)->_childs[0];
-            _root->_parent = nullptr;
-            delete dst;
+            if(dst->_size==0){
+                _root = dynamic_cast<bpindex*>(dst)->_childs[0];
+                _root->_parent = nullptr;
+                delete dst;
+            }
             break;
         }
         printf("rebalance time:%d, dst:%p, parent:%p\n", n++, dst, dst->parent());

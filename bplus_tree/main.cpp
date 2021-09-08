@@ -86,7 +86,7 @@ int test2(){
 
 int test2_1(){
     bptree tree;
-    const int N = 10000;
+    const int N = 1000;
     std::string keys[N];
     for(int i=0; i<N; ++i){
         std::string key("_key_."), val("_val_.");
@@ -112,8 +112,9 @@ int test2_1(){
 
 int test2_2(){
     bptree tree;
-    //std::string keys[] = { "u", "z", "f",  "j", "c", "h", "l","a", "n", "x", "w", "c", "m", "b","i", };//"w", "c","a","m","g","b","i","d"};
-    std::string keys[] = {"z",  "h", "l", "n", "u", "x", "f", "w", "c", "a", "m", "g", "b", "i", "d"};
+    std::string keys[] = { "u", "z", "f",  "j", "c", "h", "l","a", "n", "x", "w", "c", "m", "b","i", };//"w", "c","a","m","g","b","i","d"};
+    //std::string keys[] = {"z",  "h", "l", "n", "u", "x", "f", "w", "c", "a", "m", "g", "b", "i", "d"};
+    //std::string keys[] = {"z",  "h", "l", "n", "u", "x", "f", "w", "c", "a", "m", "g"};
     const int N = sizeof(keys)/sizeof(keys[0]);
     for(int i=0; i<N; ++i){
         tree.put(keys[i], keys[i]);

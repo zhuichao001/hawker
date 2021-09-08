@@ -4,7 +4,7 @@
 #include <functional>
 
 
-const int ROADS = 3;
+const int ROADS = 5;
 const std::string UNDEFINED_KEY = "[[BPLUS-TREE-UNDEFINED-KEY]]";
 
 typedef std::pair<std::string, std::string> kvpair;
@@ -18,6 +18,7 @@ public:
         _size(0){
     }
     virtual ~bpnode(){}
+
     virtual bool isleaf() =0;
     virtual bool isroot() =0;
     virtual std::string minkey() =0;
