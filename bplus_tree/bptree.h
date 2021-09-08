@@ -125,13 +125,11 @@ class bptree{
     bpnode *_root;
 
     bpleaf * find(const std::string &key);
-    bpindex * lowest(const std::string &key);
     int split(bpnode *orig);
+    void upindex(bpnode *node);
 
     enum Reaction{NONE=0, BORROW_FROM_LEFT=1, BORROW_FROM_RIGHT=2, MERGE_TO_LEFT=3, MERGE_TO_RIGHT=4};
-
     bpnode * rebalance(bpnode *node);
-    void upindex(bpnode *node);
 public:
     bptree(){
         _root = new bpleaf;

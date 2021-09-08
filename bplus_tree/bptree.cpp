@@ -288,14 +288,6 @@ bpleaf * bptree::find(const std::string &key){
     if(_root->isleaf()){
         return dynamic_cast<bpleaf*>(_root);
     }
-    bpindex *node = lowest(key);
-    return dynamic_cast<bpleaf*>(node->descend(key));
-}
-
-bpindex * bptree::lowest(const std::string &key){
-    if(_root->isleaf()){
-        return nullptr;
-    }
 
     bpindex *cur = dynamic_cast<bpindex*>(_root);
     while(true){
@@ -305,7 +297,7 @@ bpindex * bptree::lowest(const std::string &key){
         }
         cur = dynamic_cast<bpindex*>(son);
     }
-    return cur;
+    return dynamic_cast<bpleaf*>(cur->descend(key));
 }
 
 int bptree::get(const std::string &key, std::string &val){

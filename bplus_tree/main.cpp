@@ -146,6 +146,6 @@ int test3(){
 }
 
 int main(){
-    test2_2();
+    test2_1();
     return 0;
 }
