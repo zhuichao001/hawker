@@ -21,24 +21,29 @@ public:
 
     virtual bool isleaf() =0;
     virtual bool isroot() =0;
+
     virtual std::string minkey() =0;
     virtual std::string maxkey() =0;
 
     virtual bpnode * divide() =0;
     virtual void extend(bpnode *) =0;
-    virtual void borrowfirst(bpnode *) =0;
-    virtual void borrowlast(bpnode *) =0;
+
+    virtual void bringhead(bpnode *) =0;
+    virtual void bringtail(bpnode *) =0;
+
     virtual bool balanced() =0;
     virtual bool redundant() =0;
+
     virtual void print() =0;
 
-    bpnode * leftsib();
-    bpnode * rightsib();
+    bpnode * leftside();
+    bpnode * rightside();
 
     bool full(){return _size == ROADS;}
     bool empty(){return _size == 0;}
+
     bpindex * parent(){ return _parent; }
-    void set_parent(bpindex *p){ _parent=p; }
+    void setparent(bpindex *p){ _parent=p; }
 
     bpindex *_parent;
     int _size;
@@ -62,15 +67,19 @@ public:
 
     virtual bool isleaf(){return false;}
     virtual bool isroot(){return _parent==nullptr;}
+
     virtual std::string minkey(){return _size>0 ? _childs[0]->minkey() : "";}
     virtual std::string maxkey(){return _size>0 ? _childs[_size-1]->maxkey() : std::string(128,'\xff');}
 
     virtual bpnode * divide();
     virtual void extend(bpnode *);
-    virtual void borrowfirst(bpnode *);
-    virtual void borrowlast(bpnode *);
+
+    virtual void bringhead(bpnode *);
+    virtual void bringtail(bpnode *);
+
     virtual bool balanced(){return _size >= ROADS/2;}
     virtual bool redundant(){return _size > ROADS/2;}
+
     virtual void print();
 
     bpnode * descend(const std::string &k);
@@ -100,10 +109,13 @@ public:
 
     virtual bpnode * divide();
     virtual void extend(bpnode *);
-    virtual void borrowfirst(bpnode *);
-    virtual void borrowlast(bpnode *);
+
+    virtual void bringhead(bpnode *);
+    virtual void bringtail(bpnode *);
+
     virtual bool balanced(){return _size >= ROADS/2;}
     virtual bool redundant(){return _size > ROADS/2;}
+
     virtual void print();
 
     int get(const std::string &key, std::string &val);
