@@ -53,14 +53,7 @@ bpnode * bpindex::descend(const std::string &key){
 
 int bpindex::insert(bpnode * after_son, bpnode * new_son){
     assert(!full());
-
-    int pos = -1;
-    for(int i=0; i<=_size; ++i){
-        if(after_son==_childs[i]){
-            pos = i;
-            break;
-        }
-    }
+    int pos = offset(after_son);
     assert(pos!=-1);
 
     for(int i=_size; i>pos; --i){
@@ -75,25 +68,28 @@ int bpindex::insert(bpnode * after_son, bpnode * new_son){
     return 0;
 }
 
+int bpindex::replace(bpnode * old, bpnode *neo){
+    int pos = offset(old);
+    assert(pos!=-1);
+    _childs[pos] = neo;
+    neo->_parent = this;
+    return 0;
+}
+
 int bpindex::erase(bpnode * son){
-    int pos = -1;
-    for(int i=0; i<_size; ++i){
-        if(son==_childs[i]){
-            pos = i;
-            break;
-        }
-    }
-    
-    if(pos==-1){
-        return -1;
+    assert(!empty());
+    int pos = offset(son);
+    assert(pos!=-1);
+
+    for(int i=(pos==0?1:pos); i<_size; ++i){
+        _index[i-1] = _index[i];
     }
 
-    for(int i=pos; i<_size-1; ++i){
-        _index[i] = _index[i+1];
+    for(int i=pos; i<_size; ++i){
         _childs[i] = _childs[i+1];
     }
 
-    _childs[_size-1] = nullptr;
+    _childs[_size] = nullptr;
     _size -= 1;
 
     return 0;
@@ -116,12 +112,13 @@ bpnode * bpindex::divide(){
 }
 
 void bpindex::extend(bpnode *rsib){
+    printf("%p _size:%d, rsib %p size:%d\n", this, _size, rsib, rsib->_size);
     assert(_size+rsib->_size<=ROADS);
     if(rsib->_size==0){
-        if(rsib->isleaf()){
-            return;
-        }
-        _childs[_size]->extend(dynamic_cast<bpindex*>(rsib)->_childs[0]);
+        _index[_size] = dynamic_cast<bpindex*>(rsib)->_childs[0]->minkey();
+        _childs[_size+1] = dynamic_cast<bpindex*>(rsib)->_childs[0];
+        _childs[_size+1]->_parent = this;
+        _size += 1;
         return;
     }
 
@@ -175,20 +172,6 @@ int bpindex::offset(bpnode *son){
     bpnode **dst = std::find(_childs, _childs+_size, son);
     assert(dst!=nullptr);
     return dst-_childs;
-}
-
-int bpindex::merge(bpnode * lson, bpnode * rson){
-    int pos = offset(rson);
-    
-    printf("enter merge lson:%p, rson:%p, pos=%d, _size=%d\n", lson, rson, pos, _size);
-    for(int i=pos; i<_size; ++i){
-        _index[i-1] = _index[i];
-        _childs[i] = _childs[i+1];
-    }
-    _size -= 1;
-
-    lson->extend(rson);
-    return 0;
 }
 
 void bpindex::print(){
@@ -276,7 +259,7 @@ int bpleaf::del(const std::string &key){
             break;
         }
     }
-    printf("%p find %s, size:%d pos:%d\n", this, key.c_str(), _size, pos);
+    printf("leaf %p find %s, size:%d pos:%d\n", this, key.c_str(), _size, pos);
     if(pos==-1){
         return -1;
     }
@@ -407,7 +390,6 @@ int bptree::del(const std::string &key){
         printf("rebalance time:%d, dst:%p, parent:%p\n", n++, dst, dst->parent());
         
         dst = rebalance(dst);
-        dst = dst->parent();
     }
 
     return 0;
@@ -439,12 +421,6 @@ bpnode * bptree::rebalance(bpnode *node){
     bpnode *rn = node->rightsib();
     printf("node:%p, left:%p, right:%p\n", node, ln, rn);
 
-    if(ln==nullptr && rn==nullptr){
-        _root = node;
-        _root->_parent = nullptr;
-        return node;
-    }
-
     Reaction action = NOTHING;
     if(ln!=nullptr && rn!=nullptr){
         if(ln->redundant()){
@@ -452,41 +428,52 @@ bpnode * bptree::rebalance(bpnode *node){
         }else if(rn->redundant()){
             action = BORROW_RIGHT;
         }else{
+            printf("left:%p,right:%p is not redundant\n", ln, rn);
             action = MERGE_LEFT;
         }
-    }
-    if(ln==nullptr && rn!=nullptr){
+    }else if(ln==nullptr && rn!=nullptr){
         if(rn->redundant()){
             action = BORROW_RIGHT;
         }else{
             action = MERGE_RIGHT;
         }
-    }
-    if(ln!=nullptr && rn==nullptr){
+    } else if(ln!=nullptr && rn==nullptr){
         if(ln->redundant()){
             action = BORROW_LEFT;
         }else{
+            printf("...left:%p,is not redundant\n", ln);
             action = MERGE_LEFT;
         }
+    } else { //ln==nullptr && rn==nullptr
+        _root = node;
+        _root->_parent = nullptr;
+        return node;
     }
     printf("action:%d\n", action);
 
     if(action==BORROW_LEFT){
         node->borrowlast(ln);
         upindex(node);
-        return node;
+        return node->parent();
     }else if(action==BORROW_RIGHT){
         node->borrowfirst(rn);
         upindex(rn);
-        return node;
+        return node->parent();
     }else if(action==MERGE_LEFT){
-        node->parent()->merge(ln, node);
-        //delete node;
-        return ln;
+        ln->extend(node);
+        bpindex * parent = dynamic_cast<bpindex*>(node->_parent);
+        parent->erase(node);
+        upindex(node->_parent);
+        delete node;
+        return parent;
     }else if(action==MERGE_RIGHT){
-        node->parent()->merge(node, rn);
-        //delete rn;
-        return node;
+        node->extend(rn);
+        bpindex * parent = dynamic_cast<bpindex*>(node->_parent);
+        parent->erase(node);
+        dynamic_cast<bpindex*>(rn->_parent)->replace(rn, node);
+        upindex(node->_parent);
+        delete rn;
+        return parent;
     }
     return node;
 }

@@ -75,7 +75,7 @@ public:
     bpnode * descend(const std::string &k);
     int insert(bpnode * after_son, bpnode * new_son);
     int erase(bpnode * son);
-    int merge(bpnode * lson, bpnode * rson);
+    int replace(bpnode * old, bpnode *neo);
     int offset(bpnode *son);
 
     std::string _index[ROADS];
@@ -120,7 +120,7 @@ class bptree{
     int split(bpnode *orig);
     bpnode * findbottom(const std::string &key);
 
-    enum Reaction{NOTHING=0, BORROW_LEFT, BORROW_RIGHT, MERGE_LEFT, MERGE_RIGHT};
+    enum Reaction{NOTHING=0, BORROW_LEFT=1, BORROW_RIGHT=2, MERGE_LEFT=3, MERGE_RIGHT=4};
 
     bpnode * rebalance(bpnode *node);
     void upindex(bpnode *node);
