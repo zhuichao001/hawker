@@ -4,7 +4,7 @@
 #include <functional>
 
 
-const int ROADS = 5;
+const int ROADS = 8;
 const std::string UNDEFINED_KEY = "[[BPLUS-TREE-UNDEFINED-KEY]]";
 
 typedef std::pair<std::string, std::string> kvpair;
@@ -33,8 +33,6 @@ public:
 
     virtual bool balanced() =0;
     virtual bool redundant() =0;
-
-    virtual void print() =0;
 
     bpnode * leftside();
     bpnode * rightside();
@@ -80,8 +78,6 @@ public:
     virtual bool balanced(){return _size >= ROADS/2;}
     virtual bool redundant(){return _size > ROADS/2;}
 
-    virtual void print();
-
     bpnode * descend(const std::string &k);
     int insert(bpnode * after_son, bpnode * new_son);
     int erase(bpnode * son);
@@ -116,8 +112,6 @@ public:
     virtual bool balanced(){return _size >= ROADS/2;}
     virtual bool redundant(){return _size > ROADS/2;}
 
-    virtual void print();
-
     int get(const std::string &key, std::string &val);
     int put(const std::string &key, const std::string &val);
     int del(const std::string &key);
@@ -133,7 +127,7 @@ class bptree{
     int split(bpnode *orig);
     bpnode * findbottom(const std::string &key);
 
-    enum Reaction{NOTHING=0, BORROW_LEFT=1, BORROW_RIGHT=2, MERGE_LEFT=3, MERGE_RIGHT=4};
+    enum Reaction{NONE=0, BORROW_FROM_LEFT=1, BORROW_FROM_RIGHT=2, MERGE_TO_LEFT=3, MERGE_TO_RIGHT=4};
 
     bpnode * rebalance(bpnode *node);
     void upindex(bpnode *node);
@@ -151,5 +145,5 @@ public:
     int del(const std::string &key);
     int scan(const std::string &start, const std::string &end, std::vector<kvpair> &res);
 
-    int print();
+    void print();
 };
