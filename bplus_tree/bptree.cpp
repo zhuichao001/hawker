@@ -330,16 +330,18 @@ int bptree::put(const std::string &key, const std::string &val){
 }
 
 int bptree::del(const std::string &key){
-    if(_root->isleaf()){
-        return dynamic_cast<bpleaf*>(_root)->del(key);
+    bpnode *dst = find(key);
+    if(dst==nullptr){
+        return -1;
     }
-
-    bpindex *node = lowest(key);
-    bpnode *dst = node->descend(key);
 
     int err = dynamic_cast<bpleaf*>(dst)->del(key);
     if(err<0){
         return err;
+    }
+
+    if(dst->isroot()){
+        return 0;
     }
 
     while(dst!=nullptr){
@@ -363,8 +365,7 @@ int bptree::del(const std::string &key){
 }
 
 int bptree::scan(const std::string &start, const std::string &end, std::vector<kvpair> &res){
-    bpindex *node = lowest(start);
-    bpleaf *dst = dynamic_cast<bpleaf*>(node->descend(start));
+    bpleaf *dst = find(start);
     if(dst==nullptr){
         return -1;
     }
