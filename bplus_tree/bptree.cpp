@@ -284,48 +284,47 @@ void bpleaf::bringtail(bpnode *from){
 
 //----------------------------------
 
-bpnode * bptree::findbottom(const std::string &key){
-    bpnode *cur = _root;
-    bpnode *son = nullptr;
+bpleaf * bptree::find(const std::string &key){
+    if(_root->isleaf()){
+        return dynamic_cast<bpleaf*>(_root);
+    }
+    bpindex *node = lowest(key);
+    return dynamic_cast<bpleaf*>(node->descend(key));
+}
+
+bpindex * bptree::lowest(const std::string &key){
+    if(_root->isleaf()){
+        return nullptr;
+    }
+
+    bpindex *cur = dynamic_cast<bpindex*>(_root);
     while(true){
-        son = dynamic_cast<bpindex*>(cur)->descend(key);
+        bpnode *son = dynamic_cast<bpindex*>(cur)->descend(key);
         if(son==nullptr || son->isleaf()){
             break;
         }
-        cur = son;
+        cur = dynamic_cast<bpindex*>(son);
     }
     return cur;
 }
 
 int bptree::get(const std::string &key, std::string &val){
-    if(_root->isleaf()){
-        return dynamic_cast<bpleaf*>(_root)->get(key, val);
-    }
-
-    bpnode *node = findbottom(key);
-    bpnode *dst = dynamic_cast<bpindex*>(node)->descend(key);
+    bpleaf *dst = find(key);
     if(dst==nullptr){
         return -1;
     }
-    return dynamic_cast<bpleaf*>(dst)->get(key, val);
+    return dst->get(key, val);
 }
 
 int bptree::put(const std::string &key, const std::string &val){
-    if(_root->isleaf()){
-        dynamic_cast<bpleaf*>(_root)->put(key, val);
-        if(_root->full()){
-            split(_root);
-        }
-        return 0;
+    bpleaf *dst = find(key);
+    if(dst==nullptr){
+        return -1;
     }
 
-    bpindex *node = dynamic_cast<bpindex*>(findbottom(key));
-    bpleaf *leaf = dynamic_cast<bpleaf*>(node->descend(key));
-
-    leaf->put(key, val);
-
-    if(leaf->full()){
-        split(leaf);
+    dst->put(key, val);
+    if(dst->full()){
+        split(dst);
     }
     return 0;
 }
@@ -335,8 +334,8 @@ int bptree::del(const std::string &key){
         return dynamic_cast<bpleaf*>(_root)->del(key);
     }
 
-    bpnode *node = findbottom(key);
-    bpnode *dst = dynamic_cast<bpindex*>(node)->descend(key);
+    bpindex *node = lowest(key);
+    bpnode *dst = node->descend(key);
 
     int err = dynamic_cast<bpleaf*>(dst)->del(key);
     if(err<0){
@@ -364,8 +363,8 @@ int bptree::del(const std::string &key){
 }
 
 int bptree::scan(const std::string &start, const std::string &end, std::vector<kvpair> &res){
-    bpnode *node = findbottom(start);
-    bpleaf *dst = dynamic_cast<bpleaf*>(dynamic_cast<bpindex*>(node)->descend(start));
+    bpindex *node = lowest(start);
+    bpleaf *dst = dynamic_cast<bpleaf*>(node->descend(start));
     if(dst==nullptr){
         return -1;
     }
