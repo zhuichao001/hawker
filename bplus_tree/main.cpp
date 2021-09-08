@@ -86,7 +86,7 @@ int test2(){
 
 int test2_1(){
     bptree tree;
-    const int N = 1000;
+    const int N = 8;
     std::string keys[N];
     for(int i=0; i<N; ++i){
         std::string key("_key_."), val("_val_.");
@@ -94,6 +94,28 @@ int test2_1(){
         val += std::to_string(randint());
         tree.put(key, val);
         keys[i] = key;
+    }
+
+    printf("\n");
+    tree.print();
+
+    for(int i=0; i<N; ++i){
+        printf("i=%d, to del:%s\n", i, keys[i].c_str());
+        tree.del(keys[i]);
+        printf("\nWHEN del %s\n", keys[i].c_str());
+        tree.print();
+    }
+
+    printf("FINISH \n");
+    return 0;
+}
+
+int test2_2(){
+    bptree tree;
+    std::string keys[] = {"f","a","b","h","g","m","k","i","d"};
+    const int N = sizeof(keys)/sizeof(keys[0]);
+    for(int i=0; i<N; ++i){
+        tree.put(keys[i], keys[i]);
     }
 
     printf("\n");
