@@ -454,9 +454,11 @@ bpnode * bptree::rebalance(bpnode *node){
     if(action==BORROW_LEFT){
         node->borrowlast(ln);
         upindex(node);
+        upindex(ln);
         return node->parent();
     }else if(action==BORROW_RIGHT){
         node->borrowfirst(rn);
+        upindex(node);
         upindex(rn);
         return node->parent();
     }else if(action==MERGE_LEFT){
@@ -484,7 +486,6 @@ void bptree::upindex(bpnode *node){
     while(parent!=nullptr){
         int pos = parent->offset(node);
         if(pos>0){
-            printf("pos:%d, parent:%p, node:%p\n", pos, parent, node);
             parent->_index[pos-1] = node->minkey();
             break;
         }
