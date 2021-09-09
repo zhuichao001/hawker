@@ -20,7 +20,7 @@ public:
     }
 
     ~bptree(){
-        //TODO release
+        //TODO clear
     }
 
     int get(const std::string &key, std::string &val);

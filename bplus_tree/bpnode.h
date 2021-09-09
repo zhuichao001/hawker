@@ -7,8 +7,6 @@
 #include <functional>
 
 
-const int ROADS = 8;
-
 class bpindex;
 
 class bpnode{
@@ -45,6 +43,7 @@ public:
 
     bpindex *_parent;
     int _size;
+    static const int ROADS = 8;
 };
 
 class bpindex: public bpnode{
