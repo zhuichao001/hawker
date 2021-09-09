@@ -30,7 +30,7 @@ public:
     virtual void bringtail(bpnode *) =0;
 
     virtual bool balanced() =0;
-    virtual bool redundant() =0;
+    virtual bool fecund() =0;
 
     bpnode * leftside();
     bpnode * rightside();
@@ -75,7 +75,7 @@ public:
     virtual void bringtail(bpnode *);
 
     virtual bool balanced(){return _size >= ROADS/2;}
-    virtual bool redundant(){return _size > ROADS/2;}
+    virtual bool fecund(){return _size > ROADS/2;}
 
     bpnode * descend(const std::string &k);
     int insert(bpnode * after_son, bpnode * new_son);
@@ -109,7 +109,7 @@ public:
     virtual void bringtail(bpnode *);
 
     virtual bool balanced(){return _size >= ROADS/2;}
-    virtual bool redundant(){return _size > ROADS/2;}
+    virtual bool fecund(){return _size > ROADS/2;}
 
     int get(const std::string &key, std::string &val);
     int put(const std::string &key, const std::string &val);

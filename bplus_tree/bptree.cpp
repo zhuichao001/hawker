@@ -100,21 +100,21 @@ bpnode * bptree::rebalance(bpnode *node){
 
     Reaction action = NONE;
     if(ln!=nullptr && rn!=nullptr){
-        if(ln->redundant()){
+        if(ln->fecund()){
             action = BORROW_FROM_LEFT;
-        }else if(rn->redundant()){
+        }else if(rn->fecund()){
             action = BORROW_FROM_RIGHT;
         }else{
             action = MERGE_TO_LEFT;
         }
     }else if(ln==nullptr && rn!=nullptr){
-        if(rn->redundant()){
+        if(rn->fecund()){
             action = BORROW_FROM_RIGHT;
         }else{
             action = MERGE_TO_RIGHT;
         }
     } else if(ln!=nullptr && rn==nullptr){
-        if(ln->redundant()){
+        if(ln->fecund()){
             action = BORROW_FROM_LEFT;
         }else{
             action = MERGE_TO_LEFT;
