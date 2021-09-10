@@ -163,7 +163,6 @@ void bpindex::bringtail(bpnode *from){
 
 int bpindex::offset(bpnode *son){
     bpnode **dst = std::find(_childs, _childs+_size, son);
-    assert(dst!=nullptr);
     return dst-_childs;
 }
 
@@ -185,8 +184,6 @@ bpnode * bpleaf::divide(){
 }
 
 void bpleaf::extend(bpnode *rsib){
-    assert(_size+rsib->_size<=ROADS);
-
     bpleaf *from = dynamic_cast<bpleaf *>(rsib);
     for(int i=0; i<from->_size; ++i){
         _keys[_size+i] = from->_keys[i];
