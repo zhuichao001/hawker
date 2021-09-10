@@ -46,12 +46,8 @@ int bptree::del(const std::string &key){
     }
 
     int err = dynamic_cast<bpleaf*>(dst)->del(key);
-    if(err<0){
+    if(dst->isroot() || err<0){
         return err;
-    }
-
-    if(dst->isroot()){
-        return 0;
     }
 
     while(dst!=nullptr){
@@ -101,21 +97,21 @@ bpnode * bptree::rebalance(bpnode *node){
     Reaction action = NONE;
     if(ln!=nullptr && rn!=nullptr){
         if(ln->fecund()){
-            action = BORROW_FROM_LEFT;
+            action = BRING_FROM_LEFT;
         }else if(rn->fecund()){
-            action = BORROW_FROM_RIGHT;
+            action = BRING_FROM_RIGHT;
         }else{
             action = MERGE_TO_LEFT;
         }
     }else if(ln==nullptr && rn!=nullptr){
         if(rn->fecund()){
-            action = BORROW_FROM_RIGHT;
+            action = BRING_FROM_RIGHT;
         }else{
             action = MERGE_TO_RIGHT;
         }
     } else if(ln!=nullptr && rn==nullptr){
         if(ln->fecund()){
-            action = BORROW_FROM_LEFT;
+            action = BRING_FROM_LEFT;
         }else{
             action = MERGE_TO_LEFT;
         }
@@ -125,12 +121,12 @@ bpnode * bptree::rebalance(bpnode *node){
         return node;
     }
 
-    if(action==BORROW_FROM_LEFT){
+    if(action==BRING_FROM_LEFT){
         node->bringtail(ln);
         upindex(node);
         upindex(ln);
         return node->parent();
-    }else if(action==BORROW_FROM_RIGHT){
+    }else if(action==BRING_FROM_RIGHT){
         node->bringhead(rn);
         upindex(node);
         upindex(rn);
@@ -169,10 +165,11 @@ void bptree::upindex(bpnode *node){
 }
 
 int bptree::split(bpnode *orig){
-    assert(orig->full());
+    if(!orig->full()){
+        return -1;
+    }
 
     bpnode *neo = orig->divide();
-
     if(orig->isroot()){
         _root = new bpindex(orig, neo);
         orig->setparent(dynamic_cast<bpindex*>(_root));
@@ -181,7 +178,6 @@ int bptree::split(bpnode *orig){
     }
 
     dynamic_cast<bpindex*>(orig->parent())->insert(orig, neo);
-
     if(orig->parent()->full()){
         split(orig->parent());
     }
