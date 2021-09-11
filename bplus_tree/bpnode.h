@@ -21,7 +21,6 @@ public:
     virtual bool isroot() =0;
 
     virtual std::string minkey() =0;
-    virtual std::string maxkey() =0;
 
     virtual bpnode * divide() =0;
     virtual void extend(bpnode *) =0;
@@ -66,7 +65,6 @@ public:
     virtual bool isroot(){return _parent==nullptr;}
 
     virtual std::string minkey(){return _size>0 ? _childs[0]->minkey() : "";}
-    virtual std::string maxkey(){return _size>0 ? _childs[_size-1]->maxkey() : std::string(128,'\xff');}
 
     virtual bpnode * divide();
     virtual void extend(bpnode *);
@@ -100,7 +98,6 @@ public:
     virtual bool isleaf(){return true;}
     virtual bool isroot(){return _parent==nullptr;}
     virtual std::string minkey(){return _size>0 ? _keys[0]:"";}
-    virtual std::string maxkey(){return _size>0 ? _keys[_size-1]:"";}
 
     virtual bpnode * divide();
     virtual void extend(bpnode *);

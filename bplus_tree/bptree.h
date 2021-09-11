@@ -2,6 +2,7 @@
 #define __BPTREE_H__
 
 #include "bpnode.h"
+#include <vector>
 
 typedef std::pair<std::string, std::string> kvpair;
 
