@@ -3,7 +3,7 @@
 
 #include "hash_func.h"
 
-int hash_str(const char* src, const int len){
+uint64_t hash_str(const char* src, const int len){
     static HashFunc hash;
     return hash(src, len);
 }

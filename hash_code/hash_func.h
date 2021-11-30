@@ -4,18 +4,15 @@
 #include<stdint.h>
 #include<string>
 
-using namespace std;
 
 class HashFunc{
   uint64_t seed;
   uint64_t roll;
   public:
-    HashFunc(uint64_t _roll=63689, uint64_t _seed=131313):roll(_roll),seed(_seed){} 
-
-    void setKey(uint64_t _roll=63689, uint64_t _seed=131313){
-        roll = _roll;
-        seed = _seed;
-    }
+    HashFunc(uint64_t _roll=63689, uint64_t _seed=131313):
+        roll(_roll),
+        seed(_seed){
+    } 
 
     uint64_t operator()(const char*src, const int len)const{
         uint64_t _seed(seed), _roll(roll);
@@ -36,9 +33,18 @@ class HashFunc{
         return code;
     }
 
-    uint64_t operator()(const string &src)const{
+    uint64_t operator()(const std::string &src)const{
         return (*this)(src.c_str(), src.length());
     }
+
+    uint64_t operator()(const int &src)const{
+        return (*this)(reinterpret_cast<const char*>(&src), sizeof(int));
+    }
+
+    uint64_t operator()(const uint64_t &src)const{
+        return (*this)(reinterpret_cast<const char*>(&src), sizeof(uint64_t));
+    }
+
 };
 
 #endif

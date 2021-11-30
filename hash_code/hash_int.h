@@ -3,15 +3,9 @@
 
 #include "hash_str.h"
 
-int hash_int(int d){
-    const int LEN = 4;
-    char src[LEN];
-   
-    for(int i=0; i<LEN; ++i){
-        src[i] = d & 0xFF;
-        d >>= 8;
-    }
-    return hash_str(src, LEN);
+uint64_t hash_int(int d){
+    static HashFunc hash;
+    return hash(d);
 }
 
 #endif

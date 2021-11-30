@@ -59,9 +59,18 @@ void test_func(){
     printf("hash2 a:%ld\n", code);
 }
 
+
+void test_array(){
+    for(int i=0; i<65536; ++i){
+        uint64_t code = hash_int(i);
+        printf("%ld\n", code);
+    }
+}
+
 int main(){
     test_str();
     test_int();
     test_obj();
     test_func();
+    test_array();
 }
