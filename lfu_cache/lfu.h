@@ -6,14 +6,19 @@ template<typename Vtype>
 class FreqNode;
 
 template<typename Vtype>
+class LFUCache;
+
+template<typename Vtype>
 class Node{
-public:
     std::string key;
     Vtype val;   
-    Node<Vtype> *up;
-    Node<Vtype> *down;
+
+    Node<Vtype> *up, *down;
     FreqNode<Vtype> *slot;
 
+    friend FreqNode<Vtype>;
+    friend LFUCache<Vtype>;
+public:
     Node(const std::string &k, const Vtype &v):
         key(k),
         val(v){
@@ -25,12 +30,11 @@ public:
 
 template<typename Vtype>
 class FreqNode{
-public:
     int freq;
-    FreqNode<Vtype> *prev;
-    FreqNode<Vtype> *post;
-    Node<Vtype> *first;
-    Node<Vtype> *last;
+    FreqNode<Vtype> *prev, *post;
+    Node<Vtype> *first, *last;
+    friend LFUCache<Vtype>;
+public:
 
     FreqNode(int f):
         freq(f){
