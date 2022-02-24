@@ -2,24 +2,24 @@
 #include <string>
 #include <iostream>
 
-template<typename Vtype>
+template<typename VT>
 class FreqNode;
 
-template<typename Vtype>
+template<typename VT>
 class LFUCache;
 
-template<typename Vtype>
+template<typename VT>
 class Node{
     std::string key;
-    Vtype val;   
+    VT val;   
 
-    Node<Vtype> *up, *down;
-    FreqNode<Vtype> *slot;
+    Node<VT> *up, *down;
+    FreqNode<VT> *slot;
 
-    friend FreqNode<Vtype>;
-    friend LFUCache<Vtype>;
+    friend FreqNode<VT>;
+    friend LFUCache<VT>;
 public:
-    Node(const std::string &k, const Vtype &v):
+    Node(const std::string &k, const VT &v):
         key(k),
         val(v){
         slot = nullptr;
@@ -28,12 +28,12 @@ public:
     }
 };
 
-template<typename Vtype>
+template<typename VT>
 class FreqNode{
     int freq;
-    FreqNode<Vtype> *prev, *post;
-    Node<Vtype> *first, *last;
-    friend LFUCache<Vtype>;
+    FreqNode<VT> *prev, *post;
+    Node<VT> *first, *last;
+    friend LFUCache<VT>;
 public:
 
     FreqNode(int f):
@@ -48,7 +48,7 @@ public:
         return first == nullptr;
     }
 
-    void remove(Node<Vtype> *node){
+    void remove(Node<VT> *node){
         if(node == first){
             first = first->down;
             if(first==nullptr){
@@ -69,12 +69,12 @@ public:
         node->down->up = node->up;
     }
 
-    Node<Vtype> *pop(){
+    Node<VT> *pop(){
         if(first==nullptr){
             return NULL; 
         }
 
-        Node<Vtype> *res = first;;
+        Node<VT> *res = first;;
         first = first->down;
         if(first==nullptr){
             last = nullptr;
@@ -82,7 +82,7 @@ public:
         return res;
     }
 
-    void append(Node<Vtype> *node){
+    void append(Node<VT> *node){
         node->down = nullptr;
         node->slot = this;
         if(first == nullptr){
@@ -95,12 +95,12 @@ public:
     }
 };
 
-template<typename Vtype>
+template<typename VT>
 class LFUCache{
-    std::map<std::string, Node<Vtype>*> cache;
+    std::map<std::string, Node<VT>*> cache;
     int size;
     const int capacity;
-    FreqNode<Vtype> freq_list;
+    FreqNode<VT> freq_list;
 
 public:
     LFUCache(int c):
@@ -109,10 +109,10 @@ public:
         freq_list(0){
     }
 
-    int get(const std::string &key, Vtype &val){
+    int get(const std::string &key, VT &val){
         auto it = cache.find(key);
         if(it != cache.end()){
-            Node<Vtype> *node = it->second;
+            Node<VT> *node = it->second;
             val = node->val;
             inc_freq(node);
             return 0;
@@ -121,10 +121,10 @@ public:
         }
     }
 
-    void put(const std::string &key, Vtype &val){
+    void put(const std::string &key, VT &val){
         auto it = cache.find(key);
         if(it != cache.end()){ //update
-            Node<Vtype> *node = it->second;
+            Node<VT> *node = it->second;
             node->val = val;
             inc_freq(node);
             cache[key] = node;
@@ -139,7 +139,7 @@ public:
                 add_slot(&freq_list, 1);
             }
 
-            Node<Vtype> *node = new Node<Vtype>(key, val);
+            Node<VT> *node = new Node<VT>(key, val);
             freq_list.post->append(node);
             cache[key] = node;
             ++size;
@@ -147,10 +147,10 @@ public:
     }
 
     void display(){
-        FreqNode<Vtype> *cur = freq_list.post;
+        FreqNode<VT> *cur = freq_list.post;
         while(cur!=nullptr){
             std::cout<<"freq "<<cur->freq<<":";
-            Node<Vtype> *node = cur->first;
+            Node<VT> *node = cur->first;
             while(node!=nullptr){
                std::cout<<"("<<node->key<<","<<node->val<<"),"; 
                node = node->down;
@@ -162,8 +162,8 @@ public:
     }
 
 private:
-    void add_slot(FreqNode<Vtype> *br, int freq){
-        FreqNode<Vtype> *tmp = new FreqNode<Vtype>(freq);
+    void add_slot(FreqNode<VT> *br, int freq){
+        FreqNode<VT> *tmp = new FreqNode<VT>(freq);
         if(br->post != nullptr){
             tmp->post = br->post;
             br->post->prev = tmp;
@@ -172,7 +172,7 @@ private:
         br->post = tmp;
     }
 
-    void del_slot(FreqNode<Vtype> *br){
+    void del_slot(FreqNode<VT> *br){
         if(br->post!=nullptr){
             br->post->prev = br->prev;      
         }
@@ -182,7 +182,7 @@ private:
         delete br;
     }
 
-    void inc_freq(Node<Vtype> *node){
+    void inc_freq(Node<VT> *node){
         node->slot->remove(node);
         const int freq = node->slot->freq + 1;
         if(node->slot->post == nullptr || node->slot->post->freq != freq){
