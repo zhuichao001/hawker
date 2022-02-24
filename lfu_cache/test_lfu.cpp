@@ -1,41 +1,27 @@
 #include "lfu.h"
-#include <iostream>
 
-
-void display(LFUCache *lfu){
-    FreqNode *cur = lfu->freq_list.post;
-    while(cur!=nullptr){
-        cout<<"freq "<<cur->freq<<":";
-        Node *node = cur->first;
-        while(node!=nullptr){
-           cout<<"("<<node->key<<","<<node->val<<"),"; 
-           node = node->down;
-        }
-        cout<<endl;
-        cur = cur->post;
-    }
-    cout<<endl;
-}
 
 void test_lfu(){
-    LFUCache lfu(3); 
-    lfu.put("a", "123"); 
-    lfu.put("b", "234"); 
-    lfu.put("c", "555"); 
-    display(&lfu);
+    LFUCache<std::string> lfu(3); 
+    std::string a("123"), b("234"), c("555");
+    lfu.put("a", a); 
+    lfu.put("b", b); 
+    lfu.put("c", c); 
+    lfu.display();
 
-    lfu.put("a", "399"); 
-    display(&lfu);
+    a = "399";
+    lfu.put("a", a);
+    lfu.display();
 
-    string v1;
+    std::string v1;
     lfu.get("a", v1);
-    cout<<"val of a:"<<v1<<endl;
-    display(&lfu);
+    std::cout<<"val of a:"<<v1<<std::endl;
+    lfu.display();
 
-    string v2;
+    std::string v2;
     lfu.get("b", v2);
-    cout<<"val of b:"<<v2<<endl;
-    display(&lfu);
+    std::cout<<"val of b:"<<v2<<std::endl;
+    lfu.display();
 }
 
 int main(){
