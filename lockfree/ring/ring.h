@@ -17,8 +17,9 @@ public:
         }
 
         int e=1;
-        for(; e<n; e<<=1);        
+        for(; e<n; e<<=1){ }
         capacity_ = e;
+
         mask_ = capacity_-1;
         num_ = 0;
 
@@ -44,7 +45,7 @@ public:
         int idx = tail_;
         FLAG_STATE * flag = flags_ + idx;
         
-        // busy wait until flag is occupied
+        // busy wait until flag is free
         while (!__sync_bool_compare_and_swap(flag, FLAG_FREE, FLAG_WRITING)) {
             idx = tail_;
             flag = flags_ +  idx;
