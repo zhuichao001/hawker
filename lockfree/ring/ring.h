@@ -1,4 +1,5 @@
 #include <memory.h>
+#include "stdint.h"
 
 //FIFO
 template<class T>
@@ -26,7 +27,7 @@ public:
         head_ = 0;
         tail_ = 0;
 
-        flags_ = new FLAG_STATE[capacity_];
+        flags_ = new uint8_t[capacity_];
         memset(flags_, FLAG_FREE, capacity_);
 
         array_ = new T[capacity_];
@@ -43,7 +44,7 @@ public:
         }
 
         int idx = tail_;
-        FLAG_STATE * flag = flags_ + idx;
+        uint8_t *flag = flags_ + idx;
         
         // busy wait until flag is free
         while (!__sync_bool_compare_and_swap(flag, FLAG_FREE, FLAG_WRITING)) {
@@ -70,7 +71,7 @@ public:
         }
 
         int idx = head_;
-        FLAG_STATE * flag = flags_ + idx;
+        uint8_t *flag = flags_ + idx;
 
         while (!__sync_bool_compare_and_swap(flag, FLAG_READY, FLAG_READING)) {
             idx = head_;
@@ -89,8 +90,8 @@ public:
     }
 
 private:
-    T * array_;
-    FLAG_STATE * flags_;
+    T *array_;
+    uint8_t *flags_;
 
     int capacity_;
     int mask_;  

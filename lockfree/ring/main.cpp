@@ -23,6 +23,7 @@ void* produce(void *arg){
         }
         ++i;
     }
+    return nullptr;
 }
 
 void* consume(void *arg){
@@ -35,6 +36,7 @@ void* consume(void *arg){
         ++i;
         fprintf(stderr, "[%s] consume msg:%s\n", r->name, out.c_str());
     }
+    return nullptr;
 }
 
 int main(int argc, char *argv[]){
