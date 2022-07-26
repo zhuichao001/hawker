@@ -48,7 +48,7 @@ void test(){
     sk.insert("o","12");
     sk.print();
 
-    node_t<std::string, std::string> *t = sk.search("e");
+    node_t<std::string, std::string> *t = sk.find("e");
     if (t==NULL) {
         cout << " not foud " << endl;
         return;
