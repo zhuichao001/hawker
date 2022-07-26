@@ -88,13 +88,12 @@ struct skiplist_t {
                 update[i] = this->head;
             }
     
-            this->height = level>this->height ? level : this->height;
-            
             node_t<S,T> * neo = new node_t<S,T>(level, k, v);
             for (int i=0; i<level; ++i) {
                 neo->forwards[i] = update[i]->forwards[i];
                 update[i]->forwards[i] = neo;
             }
+            this->height = std::max(this->height, level);
             ++this->length;
             return neo;
         }
