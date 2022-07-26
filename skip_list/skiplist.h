@@ -29,11 +29,11 @@ struct skiplist_t {
     node_t<S,T> *head;
     node_t<S,T> *nil;
 
-    int length;
-    int height;
-
     const int MAXHEIGHT;
     const int WIDTH;
+
+    int length;
+    int height;
 
     skiplist_t(int maxh=16, int width=4):
         MAXHEIGHT(maxh),
