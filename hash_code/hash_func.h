@@ -6,13 +6,18 @@
 
 
 class HashFunc{
-  uint64_t seed;
   uint64_t roll;
+  uint64_t seed;
   public:
     HashFunc(uint64_t _roll=63689, uint64_t _seed=131313):
         roll(_roll),
         seed(_seed){
     } 
+
+    void SetSeed(uint64_t _roll, uint64_t _seed){
+        roll = _roll;
+        seed = _seed;
+    }
 
     uint64_t operator()(const char*src, const int len)const{
         uint64_t _seed(seed), _roll(roll);

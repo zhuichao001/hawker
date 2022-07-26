@@ -29,7 +29,7 @@ class BloomFilter{
         for(int i=0; i<hashnum; ++i){
             roll = getPrime_GT(roll);
             seed = getPrime_GT(seed);
-            hashers[i].setKey(roll, seed);
+            hashers[i].SetSeed(roll, seed);
         }
     }
 
