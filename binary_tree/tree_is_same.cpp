@@ -1,15 +1,18 @@
 #include <stdio.h>
 
 
-//判断两棵二叉树是否相同
+//Check whether two binary trees are the same
 
 struct Node{
     Node *left;
     Node *right;
     int val;
-    Node(int v){val=v; left=right=NULL;}
+    Node(int v):
+        left(nullptr),
+        right(nullptr){
+        val=v;
+    }
 };
-
 
 bool isSame(Node * one, Node *another){
     if (one==NULL) {
@@ -33,7 +36,6 @@ bool isSame(Node * one, Node *another){
     }
     return true;
 }
-
 
 int main(){
     Node a(1), b(2), c(2), d(3), e(3);
