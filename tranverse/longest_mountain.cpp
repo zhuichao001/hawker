@@ -6,21 +6,21 @@ int longest_mountain(int *arr, int len){
     }
 
     int maxlen = 0; //as result
-    int direction = 1; //1:up, -1:down
+    int trend = 1; //1:up, -1:down
     int curlen = 1;
 
     int i = 1;
     while(i<len && arr[i]<arr[i-1])++i;
     for(; i<len; ++i){
         if(arr[i]>arr[i-1]){ //in up hill
-            curlen = direction==1 ? curlen+1 : 2;
-            direction = 1;
+            curlen = (trend==1) ? curlen+1 : 2;
+            trend = 1;
         }else{ //in down hill
             ++curlen;
             if(curlen>maxlen){
                 maxlen = curlen;
             }
-            direction = -1;
+            trend = -1;
         }
     }
     return maxlen;
