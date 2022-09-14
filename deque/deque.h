@@ -11,7 +11,7 @@ struct ring_array{
         capacity(cap){ //holding at most capacity-1 elements
         start_idx = 0;
         end_idx = 0;
-        array = new T[cap]; //[,): left-close/right-open 
+        array = new T[capacity]; //[,): left-close/right-open 
         assert(array!=nullptr);
     }
 
@@ -67,7 +67,7 @@ struct ring_array{
     }
 
     int size(){
-        return (end_idx+capacity - start_idx) % capacity;
+        return (end_idx + capacity - start_idx) % capacity;
     }
 };
 
@@ -161,11 +161,13 @@ public:
         end_slot = max_slot*2-1;
         delete []table;
         table = new_table;
+        max_slot = new_max_slot;
     }
 
     bool size(){
         int total=0;
         for(int i=start_slot; i<=end_slot; ++i){
+            assert(table[i]!=nullptr);
             total += table[i]->size();
         }
         return total;
