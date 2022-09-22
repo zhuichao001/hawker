@@ -123,8 +123,8 @@ public:
         return err;
     }
 
-    bool is_rehashing(){
-        return rehash_pos_>=0;
+    int size() const {
+        return size_;
     }
 
     void print(){
@@ -142,6 +142,10 @@ public:
     }
 
 private:
+    bool is_rehashing(){
+        return rehash_pos_>=0;
+    }
+
     void rehash_slot(const int pos){
         struct hash_node<K,T> *head = &table_[idx_][pos];
         struct hash_node<K,T> *from = head->next;
