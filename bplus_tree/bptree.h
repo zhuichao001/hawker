@@ -13,7 +13,6 @@ class bptree{
     int split(bpnode *orig);
     void upindex(bpnode *node);
 
-    enum Reaction{NONE=0, BRING_FROM_LEFT=1, BRING_FROM_RIGHT=2, MERGE_TO_LEFT=3, MERGE_TO_RIGHT=4};
     bpnode * rebalance(bpnode *node);
 public:
     bptree(){

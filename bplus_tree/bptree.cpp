@@ -90,11 +90,12 @@ int bptree::scan(const std::string &start, const std::string &end, std::vector<k
     return 0;
 }
 
+enum Reform{NONE=0, BRING_FROM_LEFT=1, BRING_FROM_RIGHT=2, MERGE_TO_LEFT=3, MERGE_TO_RIGHT=4}; //used by rebalance
 bpnode * bptree::rebalance(bpnode *node){
     bpnode *ln = node->leftside();
     bpnode *rn = node->rightside();
 
-    Reaction action = NONE;
+    Reform action = NONE;
     if(ln!=nullptr && rn!=nullptr){
         if(ln->fecund()){
             action = BRING_FROM_LEFT;
