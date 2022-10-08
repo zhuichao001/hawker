@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+//给定一个长度为n的整数数组height，找出其中的两条线，找出它们与 x 轴共同构成的容器可以容纳最多的水量
+
 int max_volum(int* height, const int size){
     int l = 0;
     int r = size - 1;
