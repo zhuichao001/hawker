@@ -1,6 +1,6 @@
 # senior project algrithm adventure
 
-- **A STAR(A*)**
+- **A STAR(A*) **
 - **LRU CACHE**
 - **LFU CACHE**
 - **LOCK FREE(list/ring-buffer)**
@@ -25,3 +25,4 @@
 - **C++11 ADVANCED FEATURES**
 - **B+ TREE**
 - **PERMUTATIONS**
+- **SLIDING WINDOW**
