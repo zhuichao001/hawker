@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 void test_bloom(){
     BloomFilter bf(256);
     bf.insert("abc");
@@ -22,4 +21,3 @@ int main(){
     test_bloom();
     return 0;
 }
-
