@@ -1,19 +1,16 @@
 #include <iostream>
 #include <queue>
 
-using namespace std;
-
-
 struct Node{
     Node *left;
     Node *right;
     int val;
-    Node(int v){val=v; left=right=NULL;}
+    Node(int v){val=v; left=right=nullptr;}
 };
 
 
 int treeHeight(Node *root){
-    queue<Node*> nodes;
+    std::queue<Node*> nodes;
     nodes.push(root);
     int height = 0;
     while(!nodes.empty()){
@@ -41,6 +38,6 @@ int main(){
     b.right=&d;
     c.left=&e;
 
-    cout<<treeHeight(&a)<<endl;
+    std::cout << treeHeight(&a) << std::endl;
     return 0;
 }
