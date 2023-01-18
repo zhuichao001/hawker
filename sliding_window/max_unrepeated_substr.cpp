@@ -5,10 +5,8 @@
 
 int max_sublen(const std::string &src){
     std::unordered_map<char, int> index;
-    int left=0;
-
     int res=0;
-    for(int i=0; i<src.size(); ++i){
+    for(int i=0, left=0; i<src.size(); ++i){
         const char &c = src[i];
         if(index.find(c) == index.end()){
             res = std::max(res, i-left+1);
