@@ -37,14 +37,24 @@ int countNodes(Node *root){
     return 1 + countNodes(root->left) + countNodes(root->right);
 }
 
-
-int main(){
-    Node a(2), b(3), c(4), d(5), e(7), f(8);
+/*             d:5
+ *            /   \
+ *          b:3   f:8
+ *          / \    /
+ *        a:2 c:4 e:7
+*/
+Node *init_tree(){
+    static Node a(2), b(3), c(4), d(5), e(7), f(8);
     b.left = &a;
     b.right = &c;
-    d.left = &b;
+    d.left = &b;  // d is root
     d.right = &f;
     f.left = &e;
-    printf("count of binary tree:%d\n", countNodes(&d));
+    return &d;
+}
+
+int main(){
+    Node *root = init_tree();
+    printf("count of binary tree:%d\n", countNodes(root));
     return 0;
 }
