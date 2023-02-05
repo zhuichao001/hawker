@@ -50,6 +50,22 @@ int lowest_common(const std::vector<Node *> &va, const std::vector<Node *> &vb, 
     return found?0:-1;
 }
 
+/*             d:5
+ *            /   \
+ *          b:3   f:8
+ *          / \    /
+ *        a:2 c:4 e:7
+*/
+Node *init_tree(){
+    static Node a(2), b(3), c(4), d(5), e(7), f(8);
+    b.left = &a;
+    b.right = &c;
+    d.left = &b;  // d is root
+    d.right = &f;
+    f.left = &e;
+    return &d;
+}
+
 int main(){
     Node *root = init_tree();
 
