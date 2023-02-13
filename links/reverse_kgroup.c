@@ -1,15 +1,13 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 
+//k个一组反转链表
 
 struct Node{
     Node *next;
     int val;
 };
 
-
-//k个一组反转链表
 Node *reverseKgroup(Node *head, int k){
     Node *newhead = NULL;
     Node *newtail = NULL;
@@ -17,17 +15,17 @@ Node *reverseKgroup(Node *head, int k){
     Node *innerhead = NULL;
     Node *innertail = head;
 
-    int n = 1 ;
-    for(Node *current = head; current!=NULL; n++){
+    int n = 0 ;
+    for(Node *current = head; current!=NULL; ){
         Node *forward = current->next;
         current->next = innerhead;
         innerhead = current;
         current = forward;
 
-        if(n%k==0){
+        if(++n%k==0){
             if(newhead==NULL){
                  newhead = innerhead;
-                 newtail = innertail;
+                 newtail = head;
             } 
             newtail->next = innerhead;
             newtail = innertail;
