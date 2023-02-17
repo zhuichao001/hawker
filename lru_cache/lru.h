@@ -70,8 +70,7 @@ public:
     }
 
     void update(Node<KT,VT> *node){
-        node->next->prev = node->prev;
-        node->prev->next = node->next;
+        remove(node);
         push(node);
     }
 
@@ -104,9 +103,11 @@ public:
         if(it == cache.end()){
             return -1;
         }
+
         Node<KT,VT> *node = it->second;
-        val = node->val;
         list.update(node);
+
+        val = node->val;
         return 0;
     }
 
@@ -120,6 +121,7 @@ public:
             if(size==capacity){
                 Node<KT,VT> *node = list.pop();
                 cache.erase(node->key);
+                delete node;
             }
 
             Node<KT,VT> *node = new Node<KT,VT>(key, val);
