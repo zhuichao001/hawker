@@ -3,7 +3,7 @@
 //Solution 2, Cost: O(Log(M+N)/2)
 
 int kth_element(int arr1[], int m, int arr2[], int n, int k){
-    int mb=0, nb=0; //left boder of array
+    int mb=0, nb=0; //left boder of arr1 and arr2 arrays
     int mi=0, ni=0;
     while(k>=0){
         mi = mb+k/2>=m? m-1: mb+k/2;
