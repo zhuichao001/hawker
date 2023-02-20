@@ -5,11 +5,12 @@ void qsort(int *a, int l, int r) {
         return ;
     }
 
-    int pivot = a[(l+r)>>1];
-    a[(l+r)>>1] = a[r];
+    const int mid = (l+r)>>1;
+    int pivot = a[mid];
+    a[mid] = a[r];
 
     int i=l, j=r; 
-    for(; i<j;){
+    while(i<j){
         for(; i<j; ++i){
             if(a[i]>=pivot){
                 a[j--]=a[i];
@@ -24,11 +25,10 @@ void qsort(int *a, int l, int r) {
         }
     }
 
+    a[i] = pivot;
     qsort(a, l, i-1);
     qsort(a, i+1, r);
-    a[i] = pivot;
 }
-
 
 int main(){
     int a[] = {5,10,9,6,33,12,98,5,4,3,17,2,1};
