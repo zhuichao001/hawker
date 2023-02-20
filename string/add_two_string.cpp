@@ -1,7 +1,7 @@
 #include <string>
 #include <iostream>
 
-inline char tochar(char c){
+inline char tochar(uint8_t c){
     return c+'0';
 }
 
