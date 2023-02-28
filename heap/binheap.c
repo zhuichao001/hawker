@@ -1,6 +1,4 @@
-#include <iostream>
-
-using namespace std;
+#include <stdio.h>
 
 void swap(int &a, int &b){
     int tmp = a;
@@ -101,12 +99,11 @@ struct heap{
          base = tmp;
     }
 
-
-    int print(){
+    void print(){
         for(int i=0; i<size; i++){
-            cout<<base[i]<<" ";
+            fprintf(stderr, "%d ", base[i]);
         }
-        cout<<endl;
+        fprintf(stderr, "\n");
     }
 };
 
@@ -122,8 +119,7 @@ int main(){
     h.push(3);
 
     while(!h.empty()){
-       cout<<h.pop()<<" ===>"<<endl;
+        fprintf(stderr, "%d ===>\n", h.pop());
     }
-    cout<<h.pop()<<" ===> invalid!"<<endl;
     return 0;
 }
