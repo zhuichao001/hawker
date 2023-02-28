@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include <assert.h>
+
+#define LIKELY(x) __builtin_expect(!!(x), 1) 
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
 
 void swap(int &a, int &b){
     int tmp = a;
@@ -39,9 +43,8 @@ struct heap{
     }
 
     int pop(){
-        if(empty()){
-           return 1<<31;
-        }
+        assert(!empty());
+
         swap(base[0], base[--size]);
         _sift_down(0);
         return base[size];
@@ -52,6 +55,8 @@ struct heap{
             int p = (i-1)>>1;
             if(base[i]<base[p]){
                 swap(base[i], base[p]);
+            } else {
+                break;
             }
             i = p;
         }
@@ -60,7 +65,7 @@ struct heap{
     void _sift_down(int i){
         while(i<size/2){
             int left = i*2+1, right = i*2+2;
-            if(right<=size-1){
+            if(LIKELY(right<=size-1)){
                 int idx = base[left] < base[right]? left:right;
                 if (base[idx]<base[i]){
                     swap(base[idx], base[i]); 
