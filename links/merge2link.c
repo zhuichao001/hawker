@@ -1,27 +1,37 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <iostream>
 
-//合并两个有序单链表(递增)
-
+template <typename T>
 struct Node{
     Node *next;
-    int val;
-    Node(){next=NULL;}
+    T val;
+    Node(){
+        next=nullptr;
+    }
+    Node(T v):
+        val(v){
+        next=nullptr;
+    }
+    Node(T v, Node *nex):
+        val(v){
+        next=nex;
+    }
 };
 
-
-Node *mergeLink(Node *a, Node *b){
-    if (a == NULL) {
+template<typename T>
+Node<T> *mergeLink(Node<T> *a, Node<T> *b){
+    if (a == nullptr) {
         return b;
     }
-    if (b == NULL) {
+    if (b == nullptr) {
         return a;
     }
 
-    Node rope; //head:=rope.next
-    Node *tail = &rope;
+    Node<T> rope; //head:=rope.next
+    Node<T> *tail = &rope;
 
-    while(a!=NULL && b!=NULL){
+    while(a!=nullptr && b!=nullptr){
         if (a->val <= b->val) {
             tail->next = a;
             a = a->next;
@@ -31,35 +41,40 @@ Node *mergeLink(Node *a, Node *b){
         }
         tail = tail->next;
     }
-    tail->next = a!=NULL?a:b;
+    tail->next = a!=nullptr?a:b;
     return rope.next;
 }
 
-void test(){
-    Node linka[4], linkb[5];
-    for(int i=0;i<3;++i){
-        linka[i].next = &linka[i+1];
-        linka[i].val = i*2+1;
+template<typename T>
+Node<T> *init_link(T *a, const int len){
+    Node<T> *link = new Node<T>[len];
+    for(int i=0;i<len;++i){
+        link[i].next = (i == len-1)? nullptr : &link[i+1];
+        link[i].val = a[i];
     }
-    linka[3].val = 3*2+1;
-   
-    for(int i=0;i<4;++i){
-        linkb[i].next = &linkb[i+1];
-        linkb[i].val = i*3-1;
-    }
-    linkb[4].val = 4*3-1;
-
-    Node * head = mergeLink(linka, linkb);
-
-    while(head!=NULL){
-        printf("%d ->", head->val);
-        head = head->next;
-    }
-    printf("NULL\n");
+    return &link[0];
 }
 
+template<typename T>
+void printLink(Node<T> *link){
+    while(link!=nullptr){
+        std::cout << link->val << " ";
+        link = link->next;
+    }
+    std::cout << std::endl;
+}
+
+void test(){
+    int a[3] = {1,2,4};
+    int b[3] = {1,3,4};
+    auto la = init_link(a, 3);
+    auto lb = init_link(b, 3);
+
+    auto lc = mergeLink(la, lb);
+    assert(lc!=nullptr);
+    printLink(lc);
+}
 
 int main(){
     test();
-    return 0;
 }
