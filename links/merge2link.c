@@ -46,7 +46,7 @@ Node<T> *mergeLink(Node<T> *a, Node<T> *b){
 }
 
 template<typename T>
-Node<T> *init_link(T *a, const int len){
+Node<T> *initLink(T *a, const int len){
     Node<T> *link = new Node<T>[len];
     for(int i=0;i<len;++i){
         link[i].next = (i == len-1)? nullptr : &link[i+1];
@@ -67,8 +67,8 @@ void printLink(Node<T> *link){
 void test(){
     int a[3] = {1,2,4};
     int b[3] = {1,3,4};
-    auto la = init_link(a, 3);
-    auto lb = init_link(b, 3);
+    auto la = initLink(a, 3);
+    auto lb = initLink(b, 3);
 
     auto lc = mergeLink(la, lb);
     assert(lc!=nullptr);
