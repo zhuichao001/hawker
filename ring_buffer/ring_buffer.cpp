@@ -29,6 +29,7 @@ public:
         }
         data_[end_] = value;
         end_ = (end_+1)  % capacity_;
+        return true;
     }
 
     bool pop(T &value){
