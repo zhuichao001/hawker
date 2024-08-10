@@ -2,16 +2,16 @@
 #include <utility>
 
 template <typename T, size_t N>
-class ringBuffer {
+class RingBuffer {
 public:
-    explicit ringBuffer():
+    explicit RingBuffer():
         capacity_(N+1),
         begin_(0),
         end_(0){
         data_ = new T[capacity_];
     }
 
-    ~ringBuffer(){
+    ~RingBuffer(){
         delete []data_;
     }
 
@@ -36,7 +36,7 @@ public:
         if(empty()){
             return false;
         }
-        value = data_[begin_];
+        value = std::move(data_[begin_]);
         begin_ = (begin_+1)  % capacity_;
         return true;
     }
@@ -53,11 +53,8 @@ private:
 };
 
 
-template <typename T>
-class ringBuffer<T,10>;
-
 int main(){
-    ringBuffer<int> r(4);
+    RingBuffer<int, 8> r;
     r.empty();
     r.push(1);
     r.push(2);
