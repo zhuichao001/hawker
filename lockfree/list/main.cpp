@@ -21,6 +21,7 @@ void* produce(void *arg){
         w->list->push(e);
         ++i;
     }
+    return nullptr;
 }
 
 void* consume(void *arg){
@@ -35,6 +36,7 @@ void* consume(void *arg){
         fprintf(stderr, "[%s] consume msg:%s\n", r->name, data->c_str());
         delete data;
     }
+    return nullptr;
 }
 
 int main(int argc, char *argv[]){

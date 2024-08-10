@@ -14,12 +14,12 @@ public:
 
     Ring(int n=0){
         if(n<=0){
-            n = 16;
+            capacity_ = 16;
+        }else{
+            int e=1;
+            for(; e<n; e<<=1){ }
+            capacity_ = e;
         }
-
-        int e=1;
-        for(; e<n; e<<=1){ }
-        capacity_ = e;
 
         mask_ = capacity_-1;
         num_ = 0;
