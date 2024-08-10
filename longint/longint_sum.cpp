@@ -1,4 +1,5 @@
 #include <memory.h>
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -16,13 +17,13 @@ std::string sum(const std::string &s1, const std::string &s2){
     const int len1 = s1.size();
     const int len2 = s2.size();
 
-    const int len = std::max(len1, len2)+1;
-    char res[len];
-    memset(res, 0, sizeof(res));
-   
+    const int len = std::max(len1, len2);
+    char res[len+2];
+    memset(res, 0, sizeof(res+2));
+ 
     int rest = 0;
     int i=0;
-    while(i<len-1){
+    for (; i<len; ++i) {
         int v = rest;
         if(i<len1){
             v += s1[len1-1-i]-'0';
@@ -32,15 +33,10 @@ std::string sum(const std::string &s1, const std::string &s2){
         }
         res[i] = '0'+v%10;
         rest = v>9?1:0;
-        ++i;
     }
-    if(rest==0){
-        res[i] = 0;
-    }else{
-        res[i] = '1';
-        res[++i] = 0;
+    if(rest>0){
+        res[i++] = '1';
     }
-    
     reverse(res, i);
     return std::string(res);
 }
