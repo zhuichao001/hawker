@@ -3,22 +3,18 @@
 
 
 int incr_subseq(int *arr, int len){
-    int res=0;
+    int maxseq=1;
     int longest[len];
     for(int i=0; i<len; ++i)longest[i]=1;
     for(int i=1; i<len; ++i){
-        int accu=0;
         for(int j=0; j<i; ++j){
-            if(arr[i]>arr[j] && accu<longest[j]){
-                accu = longest[j];
+            if(arr[i]>arr[j]){
+                longest[i] = std::max(longest[i], longest[j]+1);
             }
         }
-        longest[i]=accu+1;
-        if(longest[i]>res){
-            res=longest[i];
-        }
+        maxseq = std::max(maxseq, longest[i]);
     }
-    return res;
+    return maxseq;
 }
 
 int main(){
