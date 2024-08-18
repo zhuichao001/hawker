@@ -14,13 +14,10 @@ struct node_t {
     int height;
     node_t **forwards;
 
-    node_t(const int level, const S &k, const T &v=""):
+    node_t(const int level, const S &k, const T &v=T()):
         key(k),
         val(v) {
-        forwards = new node_t*[level];
-        for (int i=0; i<level; ++i) {
-            forwards[i] = nullptr;
-        }
+        forwards = (node_t**)calloc(level, sizeof(node_t*));
     }
 };
 
@@ -72,6 +69,7 @@ struct skiplist_t {
         node_t<S,T> *update[this->MAXHEIGHT];
         node_t<S,T> *cur = this->head;
     
+        //Purpose:新插入一个节点后，其插入位置处的各层的前驱节点的next都要改变
         for (int i=this->height-1; i>=0; --i) {
             while (cur->forwards[i]->key < k) {
                 cur = cur->forwards[i];
@@ -84,7 +82,7 @@ struct skiplist_t {
             return cur->forwards[0];
         } else { //insert
             const int level = rand_level();
-            for (int i=this->height; i<level; ++i) {
+            for (int i=this->height; i<level; ++i) { //节点破新高
                 update[i] = this->head;
             }
     
