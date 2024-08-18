@@ -103,8 +103,8 @@ public:
     }
 
     ~LFUCache(){
-        for(const auto &it : freq_map){
-            delete it.second;
+        for(const auto &pair : freq_map){
+            delete pair.second;
         }
     }
 
@@ -140,12 +140,12 @@ public:
     }
 
     void display(){
-        for(const auto &p : freq_map){
-            if(p.second->empty()){
+        for(const auto &pair : freq_map){
+            if(pair.second->empty()){
                 continue;
             }
-            std::cout << "freq:" <<p.second->freq << std::endl;
-            p.second->display();
+            std::cout << "freq:" <<pair.second->freq << std::endl;
+            pair.second->display();
         }
         std::cout << "-------------------" << std::endl;
     }
