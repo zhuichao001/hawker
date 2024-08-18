@@ -1,4 +1,5 @@
 #include <map>
+#include <assert.h>
 #include <string>
 #include <iostream>
 
@@ -19,180 +20,150 @@ class Node{
     friend FreqNode<VT>;
     friend LFUCache<VT>;
 public:
+    Node(){
+        up = this; 
+        down = this;
+        slot = nullptr;
+    }
+
     Node(const std::string &k, const VT &v):
         key(k),
         val(v){
-        slot = nullptr;
-        up = nullptr; 
-        down = nullptr;
+        Node();
     }
 };
 
+//FIFO
 template<typename VT>
 class FreqNode{
     int freq;
-    FreqNode<VT> *prev, *post;
-    Node<VT> *first, *last;
+    Node<VT> dummy; 
     friend LFUCache<VT>;
 public:
-
-    FreqNode(int f):
-        freq(f){
-        prev = nullptr;
-        post = nullptr;
-        first = nullptr;
-        last = nullptr;
+    FreqNode(int f): freq(f){
+        assert(freq>0);
     }
 
     bool empty(){
-        return first == nullptr;
+        return dummy.down == &dummy;
     }
 
     void remove(Node<VT> *node){
-        if(node == first){
-            first = first->down;
-            if(first==nullptr){
-                last = nullptr;
-            }
-            return;
-        }
-
-        if(node == last){
-            last = last->up;
-            if(last==nullptr){
-                first = nullptr;
-            }
-            return;
-        }
-
         node->up->down = node->down;
         node->down->up = node->up;
     }
 
-    Node<VT> *pop(){
-        if(first==nullptr){
-            return NULL; 
+    Node<VT> *pop(){  //pop from head
+        if(empty()){
+            return nullptr; 
         }
 
-        Node<VT> *res = first;;
-        first = first->down;
-        if(first==nullptr){
-            last = nullptr;
-        }
+        Node<VT> *res = dummy.down;
+        remove(res);
         return res;
     }
 
-    void append(Node<VT> *node){
-        node->down = nullptr;
-        node->slot = this;
-        if(first == nullptr){
-            first = last = node;
-            return;
+    void push(Node<VT> *node){  //push to tail
+        assert(node!=nullptr);
+        node->up = dummy.up;
+        node->down = &dummy;
+        dummy.up->down = node;
+        dummy.up = node;
+    }
+
+    void display(){
+        Node<VT> *node = dummy.down;
+        std::cout<<"    ";
+        while(node!=&dummy){
+           std::cout<<"("<<node->key<<","<<node->val<<"), "; 
+           node = node->down;
         }
-        last->down = node;    
-        node->up = last;
-        last = node;
+        std::cout<<std::endl;
     }
 };
 
 template<typename VT>
 class LFUCache{
-    std::map<std::string, Node<VT>*> cache;
+    std::map<std::string, Node<VT>*> cache_map;
     int size;
     const int capacity;
-    FreqNode<VT> freq_list;
+    std::map<int, FreqNode<VT> *> freq_map;
 
 public:
     LFUCache(int c):
         size(0),
-        capacity(c),
-        freq_list(0){
+        capacity(c){
     }
 
-    int get(const std::string &key, VT &val){
-        auto it = cache.find(key);
-        if(it != cache.end()){
+    bool get(const std::string &key, VT &val){
+        auto it = cache_map.find(key);
+        if(it != cache_map.end()){
             Node<VT> *node = it->second;
             val = node->val;
             inc_freq(node);
-            return 0;
+            return true;
         } else {
-            return -1;
+            return false;
         }
     }
 
     void put(const std::string &key, VT &val){
-        auto it = cache.find(key);
-        if(it != cache.end()){ //update
+        auto it = cache_map.find(key);
+        if(it != cache_map.end()){ //update
             Node<VT> *node = it->second;
             node->val = val;
             inc_freq(node);
-            cache[key] = node;
         } else { //add
             if(size==capacity){
-                if(freq_list.post!=nullptr){
-                    freq_list.post->pop();
-                }
-            }
-
-            if(freq_list.post==nullptr || freq_list.post->freq != 1){
-                add_slot(&freq_list, 1);
+                eliminate(); //pepare quota
             }
 
             Node<VT> *node = new Node<VT>(key, val);
-            freq_list.post->append(node);
-            cache[key] = node;
+            inc_freq(node);
+
+            cache_map[key] = node;
             ++size;
         }
     }
 
     void display(){
-        FreqNode<VT> *cur = freq_list.post;
-        while(cur!=nullptr){
-            std::cout<<"freq "<<cur->freq<<":";
-            Node<VT> *node = cur->first;
-            while(node!=nullptr){
-               std::cout<<"("<<node->key<<","<<node->val<<"),"; 
-               node = node->down;
+        for(const auto &p : freq_map){
+            if(p.second->empty()){
+                continue;
             }
-            std::cout<<std::endl;
-            cur = cur->post;
+            std::cout << "freq:" <<p.second->freq << std::endl;
+            p.second->display();
         }
-        std::cout<<std::endl;
+        std::cout << "-------------------" << std::endl;
     }
 
 private:
-    void add_slot(FreqNode<VT> *br, int freq){
-        FreqNode<VT> *tmp = new FreqNode<VT>(freq);
-        if(br->post != nullptr){
-            tmp->post = br->post;
-            br->post->prev = tmp;
+    void eliminate(){
+        for(auto it=freq_map.begin(); it!=freq_map.end(); ++it){
+            if(!it->second->empty()){
+                Node<VT> *node = it->second->pop();
+                cache_map.erase(node->key);
+                delete node;
+                break;
+            }
         }
-        tmp->prev = br;
-        br->post = tmp;
-    }
-
-    void del_slot(FreqNode<VT> *br){
-        if(br->post!=nullptr){
-            br->post->prev = br->prev;      
-        }
-        if(br->prev!=nullptr){
-            br->prev->post = br->post;
-        }
-        delete br;
     }
 
     void inc_freq(Node<VT> *node){
-        node->slot->remove(node);
-        const int freq = node->slot->freq + 1;
-        if(node->slot->post == nullptr || node->slot->post->freq != freq){
-            add_slot(node->slot, freq);
+        int new_freq = 1;
+        if(node->slot!=nullptr){
+            node->slot->remove(node);
+            new_freq = node->slot->freq + 1;
         }
-
-        if(node->slot->empty()){
-            del_slot(node->slot);
+        auto it = freq_map.find(new_freq);
+        FreqNode<VT> *freq_node = nullptr;
+        if(it==freq_map.end()){
+            freq_node = new FreqNode<VT>(new_freq);
+            freq_map[new_freq] = freq_node;
+        }else{
+            freq_node = it->second;
         }
-
-        node->slot->post->append(node);
+        node->slot = freq_node;
+        freq_node->push(node);
     }
 };
