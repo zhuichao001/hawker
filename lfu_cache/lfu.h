@@ -14,15 +14,15 @@ class Node{
     std::string key;
     VT val;   
 
-    Node<VT> *up, *down;
+    Node<VT> *prev, *next;
     FreqNode<VT> *slot;
 
     friend FreqNode<VT>;
     friend LFUCache<VT>;
 public:
     Node(){
-        up = this; 
-        down = this;
+        prev = this; 
+        next = this;
         slot = nullptr;
     }
 
@@ -44,13 +44,20 @@ public:
         assert(freq>0);
     }
 
+    ~FreqNode(){
+        while(!empty()){
+            Node<VT> *node = pop();
+            delete node;
+        }
+    }
+
     bool empty(){
-        return dummy.down == &dummy;
+        return dummy.next == &dummy;
     }
 
     void remove(Node<VT> *node){
-        node->up->down = node->down;
-        node->down->up = node->up;
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
     }
 
     Node<VT> *pop(){  //pop from head
@@ -58,25 +65,25 @@ public:
             return nullptr; 
         }
 
-        Node<VT> *res = dummy.down;
+        Node<VT> *res = dummy.next;
         remove(res);
         return res;
     }
 
     void push(Node<VT> *node){  //push to tail
         assert(node!=nullptr);
-        node->up = dummy.up;
-        node->down = &dummy;
-        dummy.up->down = node;
-        dummy.up = node;
+        node->prev = dummy.prev;
+        node->next = &dummy;
+        dummy.prev->next = node;
+        dummy.prev = node;
     }
 
     void display(){
-        Node<VT> *node = dummy.down;
+        Node<VT> *node = dummy.next;
         std::cout<<"    ";
         while(node!=&dummy){
            std::cout<<"("<<node->key<<","<<node->val<<"), "; 
-           node = node->down;
+           node = node->next;
         }
         std::cout<<std::endl;
     }
@@ -84,15 +91,21 @@ public:
 
 template<typename VT>
 class LFUCache{
-    std::map<std::string, Node<VT>*> cache_map;
     int size;
     const int capacity;
+    std::map<std::string, Node<VT>*> cache_map;
     std::map<int, FreqNode<VT> *> freq_map;
 
 public:
-    LFUCache(int c):
+    LFUCache(int cap):
         size(0),
-        capacity(c){
+        capacity(cap){
+    }
+
+    ~LFUCache(){
+        for(const auto &it : freq_map){
+            delete it.second;
+        }
     }
 
     bool get(const std::string &key, VT &val){
@@ -109,7 +122,7 @@ public:
 
     void put(const std::string &key, VT &val){
         auto it = cache_map.find(key);
-        if(it != cache_map.end()){ //update
+        if(it != cache_map.end()){ //prevdate
             Node<VT> *node = it->second;
             node->val = val;
             inc_freq(node);
