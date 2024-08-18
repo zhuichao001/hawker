@@ -4,25 +4,24 @@
 #include<iostream>
 #include<iterator>
 
-typedef int ValType ;
-typedef int IndexType ;
-typedef std::pair<ValType,IndexType> SlidPairType;
-
+//使用双端队列来实现
 std::vector<int> maxval_sliding(const std::vector<int> &nums, const int window_size){
     std::vector<int> res;
-    std::priority_queue<SlidPairType> maxheap;
+    typedef int IndexType;
+    std::deque<IndexType> maxq;
     res.reserve(nums.size()-window_size+1);
-    for(int i=0; i<nums.size(); ++i){
-        maxheap.push(SlidPairType(nums[i],i));
-        if(i<window_size-1){
+    for (int i=0; i<nums.size(); ++i) {
+        while (!maxq.empty() && nums[i]>nums[maxq.back()]) {
+            maxq.pop_back();
+        }
+        maxq.push_back(i);
+        if (i < window_size-1) {
             continue;
         }
-        SlidPairType t = maxheap.top();
-        while(t.second <= i-window_size){
-            maxheap.pop();
-            t=maxheap.top();
+        if (maxq.front() <= i-window_size) {
+            maxq.pop_front();
         }
-        res.push_back(t.first);
+        res.push_back(nums[maxq.front()]);
     }
     return res;
 }
