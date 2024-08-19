@@ -7,8 +7,7 @@
 
 void reverse_statement(const std::string &input, std::string &res){
     std::deque<std::tuple<int,int>> stack;
-    int start=0,end=0;
-    for(;end<=input.size();++end){
+    for(int start=0,end=0;end<=input.size();++end){
         if((input[end]==' '|| input[end]==0)&& input[start]!=' '){
             stack.push_front(std::tuple<int,int>(start, end));
             start=end;
