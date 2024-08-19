@@ -10,17 +10,14 @@ template<typename VT>
 class LFUCache;
 
 template<typename VT>
-class Node{
+struct Node{
     std::string key;
     VT val;   
 
     Node<VT> *prev, *next;
     FreqNode<VT> *slot;
 
-    friend FreqNode<VT>;
-    friend LFUCache<VT>;
-public:
-    Node(){
+    Node():{
         prev = this; 
         next = this;
         slot = nullptr;
