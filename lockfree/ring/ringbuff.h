@@ -3,7 +3,7 @@
 
 //FIFO
 template<class T>
-class Ring {
+class RingBuff {
 public:
     enum FLAG_STATE{
         FLAG_FREE    = 0,
@@ -12,7 +12,7 @@ public:
         FLAG_READING = 3,
     };
 
-    Ring(int n=0){
+    RingBuff(int n=0){
         if(n<=0){
             capacity_ = 16;
         }else{
@@ -33,7 +33,7 @@ public:
         array_ = new T[capacity_];
     }
 
-    ~Ring() {
+    ~RingBuff() {
         delete []flags_;
         delete []array_;
     }

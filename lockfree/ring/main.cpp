@@ -1,7 +1,7 @@
 #include <string>
 #include <string.h>
 #include <pthread.h>
-#include "ring.h"
+#include "ringbuff.h"
 
 const int NP = 30;
 const int NC = 20;
@@ -10,7 +10,7 @@ const int JOBS = 10000;
 
 struct worker{
     char name[16];
-    Ring<std::string> *ring;
+    RingBuff<std::string> *ring;
 };
 
 void* produce(void *arg){
@@ -40,7 +40,7 @@ void* consume(void *arg){
 }
 
 int main(int argc, char *argv[]){
-    Ring<std::string> *ring = new Ring<std::string>(1000);
+    RingBuff<std::string> *ring = new RingBuff<std::string>(1000);
 
     pthread_t rid[NC];
     pthread_t wid[NP];
