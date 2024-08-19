@@ -1,5 +1,6 @@
 #include <memory.h>
-#include "stdint.h"
+#include <stdint.h>
+#include <assert.h>
 
 //FIFO
 template<class T>
@@ -66,6 +67,8 @@ public:
     }
 
     bool pop(T * e) {
+        assert(e!=nullptr);
+
         if (num_ == 0){
             return false;
         }
